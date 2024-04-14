@@ -40,7 +40,7 @@ const updateUser = asyncHandler(async (req, res, next) => {
   //check found data or no
   if (!document) {
     //send faild response
-    return next(new ApiError(`Faild To get User data from this id ${req.params._id}`, 400));
+    return next(new ApiError(`Faild To get User data from this id ${req.params._id}`, 404));
   }
 
   if (document.image) {
@@ -87,7 +87,7 @@ const updateUserPassword = asyncHandler(async (req, res, next) => {
   );
 
   if (!document) {
-    return next(new ApiError(`Faild To get User data from this id ${id}`, 400));
+    return next(new ApiError(`Faild To get User data from this id ${id}`, 404));
   }
 
   res.status(200).json({

@@ -13,7 +13,7 @@ const creatOne = (model, modelName) =>
     //send success response
     res.status(201).json({
       status: true,
-      message: `Sucess Create ${modelName}`,
+      message: `Successful ${modelName} creation`,
       data: document,
     });
   });
@@ -32,9 +32,9 @@ const getAllData = (model, modelName) =>
     //check when no data found in db
     if (!document[0]) {
       // send success response
-      return res.status(200).json({
+      return res.status(204).json({
         status: true,
-        message: `nothing data entry this ${modelName} `,
+        message: `There is no data entry for this ${modelName} `,
       });
     }
 
@@ -56,7 +56,7 @@ const getOne = (model, modelName) =>
     if (!document) {
       //send faild response
       return next(
-        new ApiError(`Faild To get ${modelName} data from this id ${id}`, 400)
+        new ApiError(`Faild To get ${modelName} data from this id ${id}`, 404)
       );
     }
     //send success respons
@@ -79,7 +79,7 @@ const updateOne = (model, modelName) =>
     if (!document) {
       //send faild response
       return next(
-        new ApiError(`Faild To get ${modelName} data from this id ${id}`, 400)
+        new ApiError(`Faild To get ${modelName} data from this id ${id}`, 404)
       );
     }
 
@@ -89,7 +89,7 @@ const updateOne = (model, modelName) =>
     }
 
     //send success respons
-    res.status(200).json({
+    res.status(204).json({
       status: true,
       message: `Sucess To Update ${modelName} data from this id`,
     });
@@ -110,7 +110,7 @@ const deleteOne = (model, modelName) =>
       return next(
         new ApiError(
           `Faild To Delete ${modelName} data from this id ${id}`,
-          400
+          404
         )
       );
     }
@@ -123,7 +123,7 @@ const deleteOne = (model, modelName) =>
     }
 
     //send success respons
-    res.status(200).json({
+    res.status(204).json({
       status: true,
       message: `Sucess To Delete ${modelName} data from this id`,
     });
@@ -139,7 +139,7 @@ const deleteAll = (model, modelName) =>
     deleteImagesInFolder(modelName);
 
     //send success respons
-    res.status(200).json({
+    res.status(204).json({
       status: true,
       message: `Sucess To Delete  all data from this ${modelName} `,
     });

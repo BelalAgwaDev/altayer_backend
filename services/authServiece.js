@@ -34,33 +34,6 @@ const signUp = asyncHandler(async (req, res, next) => {
 
 
 
-// // @ dec sign Up as aDriver Or Store Owner
-// // @ route Post  /api/vi/auth/signUp
-// // @ access Public
-// const signUpAsADriverOrStoreOwner = asyncHandler(async (req, res, next) => {
-//   // create user
-//   const document = await userModel.create({
-//     name: req.body.name,
-//     phone: req.body.phone,
-//     email: req.body.email,
-//     password: req.body.password,
-//     role: req.body.role
-//   });
-
-//   //generate token
-//   const token = creatToken(document._id);
-
-//   //send success response
-//   res.status(201).json({
-//     status: true,
-//     message: `Sucess Create user`,
-//     token: token,
-//     data: document,
-//   });
-// });
-
-
-
 // @ dec login
 // @ route Post  /api/vi/auth/login
 // @ access Public
@@ -72,7 +45,7 @@ const login = asyncHandler(async (req, res, next) => {
     !document ||
     !(await bcrypt.compare(req.body.password, document.password))
   ) {
-    return next(new ApiError("Incorrect email or password.", 422));
+    return next(new ApiError("Incorrect email or password.", 400));
   }
 
   //generate token
@@ -96,7 +69,7 @@ const forgetPassword = asyncHandler(async (req, res, next) => {
 
   if (!document) {
     return next(
-      new ApiError(`No user has this email ${req.body.email}`, 422)
+      new ApiError(`No user has this email ${req.body.email}`, 404)
     );
   }
 
@@ -156,7 +129,7 @@ const forgetPassword = asyncHandler(async (req, res, next) => {
     document.passwordRestVerified = undefined;
 
     await document.save();
-    return next(new ApiError("There was an error sending the email", 422));
+    return next(new ApiError("There was an error sending the email", 409));
   }
 
   //send success response to client side
@@ -183,7 +156,7 @@ const verifyCode = asyncHandler(async (req, res, next) => {
   });
 
   if (!document) {
-    return next(new ApiError(`the rest code is invalid or expired`, 422));
+    return next(new ApiError(`the rest code is invalid or expired`, 404));
   }
 
   // reset code valid
@@ -208,7 +181,7 @@ const resetPassword = asyncHandler(async (req, res, next) => {
 
   if (!document) {
     return next(
-      new ApiError(`No user has this email ${req.body.email}`, 422)
+      new ApiError(`No user has this email ${req.body.email}`, 404)
     );
   }
 
@@ -311,7 +284,7 @@ const allowedTo = (...roles) =>
     //check roles equal role with user
     if (!roles.includes(req.userModel.role)) {
       return next(
-        new ApiError("you are not allowed to access this route", 422)
+        new ApiError("you are not allowed to access this route", 403)
       );
     }
 
