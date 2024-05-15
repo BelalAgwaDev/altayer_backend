@@ -19,7 +19,15 @@ const driverSchema = new mongoose.Schema(
     default: "motorcycle",
   },
 
-  nationalImage:[String],
+  frontNationalIdImage:String,
+  NationalId: {
+    type: String,
+    trim: true,
+    required: [true, "National Id required"],
+    minlength: [14, "too short National Id"],
+    
+  },
+  backNationalIdImage: String,
 
   anotherPhone:String,
   
@@ -36,20 +44,18 @@ const driverSchema = new mongoose.Schema(
 const setImageUrl = (doc) => {
   //return image base url + image name
   if (doc) {
-    const imageUrl = `${process.env.BASE_URL}/user/${doc}`;
+    const imageUrl = `${process.env.BASE_URL}/driver/${doc}`;
     return imageUrl;
   }
 };
 
 //work in create data
 driverSchema.pre("save", async function (next) {
-  this.image = setImageUrl(this.image);
-  if (!this.isModified("password")) return next();
-  //hashing user password
-  this.password = await bcrypt.hash(this.password, 12);
+  this.frontNationalIdImage = setImageUrl(this.frontNationalIdImage);
+  this.backNationalIdImage = setImageUrl(this.backNationalIdImage);
   next();
 });
 
-const driverModel = mongoose.model("User", driverSchema);
+const driverModel = mongoose.model("driver", driverSchema);
 
 module.exports = driverModel;

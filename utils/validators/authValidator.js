@@ -24,21 +24,14 @@ exports.signUpValidator = [
       })
     ),
 
-  check("passwordConfirm")
-    .notEmpty()
-    .withMessage("password confirmation required"),
+
 
   check("password")
     .notEmpty()
     .withMessage("password required")
     .isLength({ min: 6 })
-    .withMessage("password must be at least 6 characters long")
-    .custom((password, { req }) => {
-      if (password !== req.body.passwordConfirm) {
-        throw new Error("password or password confirmation incorrect");
-      }
-      return true;
-    }),
+    .withMessage("password must be at least 6 characters long"),
+
 
   check("phone")
     .optional()

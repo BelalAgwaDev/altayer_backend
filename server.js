@@ -3,6 +3,7 @@ const path = require("path");
 const dotenv = require("dotenv");
 const morgan = require("morgan");
 const dbConnection = require("./config/database");
+const cloudinaryConfig = require("./config/cloudinaryConfig");
 const mountRoutes = require("./routes");
 const ApiError = require("./utils/apiError/apiError");
 const globalError = require("./middleware/errorMiddleware");
@@ -11,6 +12,9 @@ dotenv.config({ path: "config.env" });
 
 //connect with db
 dbConnection();
+
+//connection with cloudinary 
+cloudinaryConfig();
 
 //express app
 const app = express();
@@ -35,7 +39,7 @@ mountRoutes(app);
 
 //Route error middleware
 app.all("*", (req, res, next) => {
-  next(new ApiError(`can't find this route: ${req.originalUrl}`, 400));
+  next(new ApiError(`can't find this route: ${req.originalUrl}`, 404));
 });
 
 //Global error handling middleware for express

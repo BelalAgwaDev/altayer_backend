@@ -5,7 +5,7 @@ const deleteImage = (req, document) => {
   {
     const imagePath = document
       ? `${req.body.directorUrl}/${document.image.split("/")[4]}`
-      : req.body.imageUrl;
+      : req.body.image;
 
     //check image in body
     if (imagePath) {
