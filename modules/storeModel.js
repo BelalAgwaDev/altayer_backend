@@ -1,40 +1,95 @@
 const mongoose = require("mongoose");
+const moment = require('moment-timezone');
 
 const StoreSchema = mongoose.Schema(
   {
+    StoreName: {
+      type: String,
+      trim: true,
+      required: [true, "store Name is Required"],
+    },
+
+    StoreDescription: {
+      type: String,
+      trim: true,
+      required: [true, "store description is Required"],
+    },
+
+    rating: {
+      min: { type: Number, min: 0 },
+      max: { type: Number, max: 4 },
+      default: 0,
+    },
+
+    deliveryTime: String,
+    minimumPurchases: mongoose.Types.Decimal128,
+    deliveryCharge: mongoose.Types.Decimal128,
+    preOrder: Boolean,
+
+    legalStoreName: {
+      type: String,
+      trim: true,
+      required: [true, "Legal store Name is Required"],
+    },
+
+    deliveryBy: {
+      type: String,
+      enum: ["Store", "applicationDelivery","Store And applicationDelivery"],
+      default: "applicationDelivery",
+    },
+
    
-  
-    alias: {
-      type: String,
-      enum: ["Apartment", "House", "Office"],
-      default: "Apartment",
+
+
+
+    openTime: { type: String, required: true },  
+    closeTime: { type: String, required: true }, 
+    timezone: { type: String, default: 'Africa/Cairo'},  
+    isBusy: { type: Boolean, default: false },   
+    isBusyManual: { type: Boolean, default: false }, 
+    busyHours: [{ start: String, end: String }] , 
+
+
+
+
+    storeLogoImage: String,
+    storeCoverImage: String,
+
+
+    category: {
+      type: mongoose.Schema.ObjectId,
+      ref: "Category",
+      required: [true, "category id Required"],
     },
 
-    BuildingName: {
-      type: String,
-      trim: true,
-      required: [true, "Address Building Name required"],
-      minlength: [3, "too short Address Building Name"],
-      maxlength: [50, "too long Address Building Name"],
-    },
+    subCategory: [
+      {
+        type: mongoose.Schema.ObjectId,
+        ref: "Category",
+        required: [true, "category id Required"],
+      },
+    ],
 
-    apartmentNumber: String,
-    floor: String,
-    region: {
-      type: String,
-      trim: true,
-      required: [true, "Address region required"],
-      minlength: [3, "too short Address region"],
-      maxlength: [50, "too long Address region"],
-    },
-    additionalDirections: String,
-    streetName:String,
-    phone: {
-      type: String,
-      required: [true, "phone required"],
+   
 
-    },
-    addressLabel: String,
+    StoreAddress: [
+      {
+        id: { type: mongoose.Schema.Types.ObjectId },
+        StoreAddressFromMap: {
+          type: String,
+          trim: true,
+          required: [true, "store address is Required"],
+          minlength: [3, "Too short store adress"],
+        },
+        storeRegion: {
+          type: String,
+          trim: true,
+          required: [true, "store Region is Required"],
+          minlength: [3, "Too short store Region"],
+          maxlength: [200, "Too long store Region"],
+        },
+      },
+    ],
 
     user: {
       type: mongoose.Schema.ObjectId,
@@ -44,6 +99,30 @@ const StoreSchema = mongoose.Schema(
   { timestamps: true }
 );
 
-const AddressModel = mongoose.model("Store", StoreSchema);
 
-module.exports = AddressModel;
+
+StoreSchema.virtual('isOpen').get(function() {
+  const now = moment.tz(this.timezone);
+  const openingMoment = moment.tz(`${now.format('YYYY-MM-DD')} ${this.openTime}`, this.timezone);
+  const closingMoment = moment.tz(`${now.format('YYYY-MM-DD')} ${this.closeTime}`, this.timezone);
+
+  return now.isBetween(openingMoment, closingMoment);
+});
+
+StoreSchema.virtual('storeIsBusy').get(function() {
+  if (this.isBusyManual) {
+    return this.isBusy;
+  }
+
+  const now = moment.tz(this.timezone);
+  return this.busyHours.some(busyTime => {
+    const busyStart = moment.tz(`${now.format('YYYY-MM-DD')} ${busyTime.start}`, this.timezone);
+    const busyEnd = moment.tz(`${now.format('YYYY-MM-DD')} ${busyTime.end}`, this.timezone);
+    return now.isBetween(busyStart, busyEnd);
+  });
+});
+
+
+const StoreModel = mongoose.model("Store", StoreSchema);
+
+module.exports = StoreModel;
