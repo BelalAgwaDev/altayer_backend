@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const moment = require('moment-timezone');
+const moment = require("moment-timezone");
 
 const StoreSchema = mongoose.Schema(
   {
@@ -16,8 +16,13 @@ const StoreSchema = mongoose.Schema(
     },
 
     rating: {
-      min: { type: Number, min: 0 },
-      max: { type: Number, max: 4 },
+      type: Number,
+      min: [1, "rating must be above or equal 1.0"],
+      max: [5, "rating must be blew or equal 5.0"],
+    },
+
+    ratingQuantity: {
+      type: Number,
       default: 0,
     },
 
@@ -34,27 +39,19 @@ const StoreSchema = mongoose.Schema(
 
     deliveryBy: {
       type: String,
-      enum: ["Store", "applicationDelivery","Store And applicationDelivery"],
+      enum: ["Store", "applicationDelivery", "StoreAndApplicationDelivery"],
       default: "applicationDelivery",
     },
 
-   
-
-
-
-    openTime: { type: String, required: true },  
-    closeTime: { type: String, required: true }, 
-    timezone: { type: String, default: 'Africa/Cairo'},  
-    isBusy: { type: Boolean, default: false },   
-    isBusyManual: { type: Boolean, default: false }, 
-    busyHours: [{ start: String, end: String }] , 
-
-
-
+    openTime: { type: String, required: true },
+    closeTime: { type: String, required: true },
+    timezone: { type: String, default: "Africa/Cairo" },
+    isBusy: { type: Boolean, default: false },
+    isBusyManual: { type: Boolean, default: false },
+    busyHours: [{ start: String, end: String }],
 
     storeLogoImage: String,
     storeCoverImage: String,
-
 
     category: {
       type: mongoose.Schema.ObjectId,
@@ -62,24 +59,19 @@ const StoreSchema = mongoose.Schema(
       required: [true, "category id Required"],
     },
 
-    subCategory: [
-      {
-        type: mongoose.Schema.ObjectId,
-        ref: "Category",
-        required: [true, "category id Required"],
-      },
-    ],
-
-   
-
     StoreAddress: [
       {
         id: { type: mongoose.Schema.Types.ObjectId },
-        StoreAddressFromMap: {
-          type: String,
-          trim: true,
-          required: [true, "store address is Required"],
-          minlength: [3, "Too short store adress"],
+        location: {
+          type: {
+            type: String,
+            enum: ['Point'],
+            required: true,
+          },
+          coordinates: {
+            type:[Number],
+            required: true,
+          },
         },
         storeRegion: {
           type: String,
@@ -101,27 +93,38 @@ const StoreSchema = mongoose.Schema(
 
 
 
-StoreSchema.virtual('isOpen').get(function() {
+StoreSchema.virtual("isOpen").get(function () {
   const now = moment.tz(this.timezone);
-  const openingMoment = moment.tz(`${now.format('YYYY-MM-DD')} ${this.openTime}`, this.timezone);
-  const closingMoment = moment.tz(`${now.format('YYYY-MM-DD')} ${this.closeTime}`, this.timezone);
+  const openingMoment = moment.tz(
+    `${now.format("YYYY-MM-DD")} ${this.openTime}`,
+    this.timezone
+  );
+  const closingMoment = moment.tz(
+    `${now.format("YYYY-MM-DD")} ${this.closeTime}`,
+    this.timezone
+  );
 
   return now.isBetween(openingMoment, closingMoment);
 });
 
-StoreSchema.virtual('storeIsBusy').get(function() {
+StoreSchema.virtual("storeIsBusy").get(function () {
   if (this.isBusyManual) {
     return this.isBusy;
   }
 
   const now = moment.tz(this.timezone);
-  return this.busyHours.some(busyTime => {
-    const busyStart = moment.tz(`${now.format('YYYY-MM-DD')} ${busyTime.start}`, this.timezone);
-    const busyEnd = moment.tz(`${now.format('YYYY-MM-DD')} ${busyTime.end}`, this.timezone);
+  return this.busyHours.some((busyTime) => {
+    const busyStart = moment.tz(
+      `${now.format("YYYY-MM-DD")} ${busyTime.start}`,
+      this.timezone
+    );
+    const busyEnd = moment.tz(
+      `${now.format("YYYY-MM-DD")} ${busyTime.end}`,
+      this.timezone
+    );
     return now.isBetween(busyStart, busyEnd);
   });
 });
-
 
 const StoreModel = mongoose.model("Store", StoreSchema);
 

@@ -1,7 +1,7 @@
-const subCategoryModel = require("../modules/subCategoryModel");
-const { uploadSingleImage } = require("../middleware/imageUploadMiddleware");
-const resizeImage = require("../middleware/resizeImage");
-const factory = require("./handlerFactory");
+const subCategoryModel = require("../../modules/subCategoryModel");
+const { uploadSingleImage } = require("../../middleware/imageUploadMiddleware");
+const resizeImage = require("../../middleware/resizeImage");
+const factory = require("../handleFactor/handlerFactory");
 
 //upload single image
 const uploadSubCategoryImage = uploadSingleImage("image");
@@ -39,7 +39,6 @@ const deleteSubCategory = factory.deleteOne(subCategoryModel, "subCategory");
 // @ access Private
 const deleteAllSubCategory = factory.deleteAll(subCategoryModel, "subCategory");
 
-
 //@dec nested route
 const setCategoryIdToBody = (req, res, next) => {
   if (!req.body.category) req.body.category = req.params.categoryId;
@@ -53,7 +52,6 @@ const createFilterObject = (req, res, next) => {
   next();
 };
 
-
 module.exports = {
   creatSubCategory,
   getAllSubCategory,
@@ -64,5 +62,5 @@ module.exports = {
   uploadSubCategoryImage,
   resizeSubCategoryImage,
   setCategoryIdToBody,
-  createFilterObject
+  createFilterObject,
 };

@@ -1,5 +1,5 @@
 const express = require("express");
-const authServices = require("../services/authServiece");
+const authServices = require("../services/authServices/protect");
 const {
   creatSubCategory,
   getAllSubCategory,
@@ -11,7 +11,7 @@ const {
   resizeSubCategoryImage,
   setCategoryIdToBody,
   createFilterObject
-} = require("../services/subCategoryService");
+} = require("../services/subCategoryServices/subCategoryService");
 
 const {
   createSubCatogryValidator,

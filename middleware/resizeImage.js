@@ -20,6 +20,7 @@ const resizeImage = (directorName) =>
 
       //save image into our database
       req.body.image = filename;
+     // req.body.image = filename;
       req.body.directorUrl = directorPath;
       req.body.imageUrl = filePath;
     }

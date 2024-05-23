@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const AddressSchema = mongoose.Schema(
+const UserAddressSchema = mongoose.Schema(
   {
    
   
@@ -36,6 +36,18 @@ const AddressSchema = mongoose.Schema(
     },
     addressLabel: String,
 
+    location: {
+      type: {
+        type: String,
+        enum: ['Point'],
+        required: true,
+      },
+      coordinates: {
+        type:[Number],
+        required: true,
+      },
+    },
+
     user: {
       type: mongoose.Schema.ObjectId,
       ref: "User",
@@ -44,6 +56,8 @@ const AddressSchema = mongoose.Schema(
   { timestamps: true }
 );
 
-const AddressModel = mongoose.model("Address", AddressSchema);
+UserAddressSchema.index({ location: '2dsphere' });
+
+const AddressModel = mongoose.model("UserAddress", UserAddressSchema);
 
 module.exports = AddressModel;

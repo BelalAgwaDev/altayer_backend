@@ -1,7 +1,9 @@
 const asyncHandler = require("express-async-handler");
-const storeModel = require("../../modules/storeModel");
+const storeModel = require("../../../modules/storeModel");
 
-
+  //////////////////////////////////////////
+  ///////////////////////
+  ////////////////////////////////////////
 // @ dec remove subCategory to store
 // @ route delete  /api/vi/store/SubCategory/:subCategoryId
 // @ access protected/StoreOwner
@@ -27,6 +29,10 @@ const removeSubCategoryFromStore = asyncHandler(async (req, res, next) => {
       data: document,
     });
   });
+
+    //////////////////////////////////////////
+  ///////////////////////
+  ////////////////////////////////////////
   
   // @ dec add SubCategory to store
   // @ route Post  /api/vi/store/SubCategory
@@ -38,7 +44,7 @@ const removeSubCategoryFromStore = asyncHandler(async (req, res, next) => {
       { user: req.userModel._id },
       {
         $addToSet: {
-            subCategory:req.params.subCategoryId, 
+            subCategory:req.body.subCategoryId, 
         },
       }
     );
@@ -51,7 +57,9 @@ const removeSubCategoryFromStore = asyncHandler(async (req, res, next) => {
     });
   });
 
-  
+  //////////////////////////////////////////
+  ///////////////////////
+  ////////////////////////////////////////
   // @ dec get all SubCategory to store
   // @ route get  /api/vi/store/SubCategory
   // @ access protected/StoreOwner

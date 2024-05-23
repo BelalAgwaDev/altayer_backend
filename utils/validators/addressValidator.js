@@ -1,10 +1,7 @@
 const { check } = require("express-validator");
 const validatorMiddleware = require("../../middleware/validatorMiddleware");
 
-exports.getAddressValidator = [
-  check("id").isMongoId().withMessage("Invalid Address id format"),
-  validatorMiddleware,
-];
+
 
 exports.createAddressValidator = [
   check("BuildingName")

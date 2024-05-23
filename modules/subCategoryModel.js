@@ -11,23 +11,24 @@ const subCategorySchema = new mongoose.Schema(
       maxlength: [32, "Too long subCategory name"],
     },
     image: String,
-    category:{
-      type:mongoose.Schema.ObjectId,
-      ref:"Category",
-      required:[true,"subCategory must be belong to parent category"]
+    backgroundColor: String,
+
+    category: {
+      type: mongoose.Schema.ObjectId,
+      ref: "Category",
+      required: [true, "subCategory must be belong to parent category"],
     },
   },
   { timestamps: true }
 );
 
-
-const setImageUrl=(doc)=>{
+const setImageUrl = (doc) => {
   //return image base url + image name
   if (doc.image) {
     const imageUrl = `${process.env.BASE_URL}/subCategory/${doc.image}`;
     doc.image = imageUrl;
   }
-}
+};
 
 // work in get all data ,get specific data ,update data, delete
 subCategorySchema.pre(/^find/, function (next) {
@@ -36,12 +37,12 @@ subCategorySchema.pre(/^find/, function (next) {
 });
 // work in get all data ,get specific data ,update data, delete
 subCategorySchema.post("init", (doc) => {
- setImageUrl(doc)
+  setImageUrl(doc);
 });
 
 //work in create data
-subCategorySchema.post('save', (doc) => {
-  setImageUrl(doc)
+subCategorySchema.post("save", (doc) => {
+  setImageUrl(doc);
 });
 
 const subCategoryModel = mongoose.model("subCategory", subCategorySchema);

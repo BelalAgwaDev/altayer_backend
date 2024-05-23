@@ -1,7 +1,7 @@
-const categoryModel = require("../modules/categoryModel");
-const { uploadSingleImage } = require("../middleware/imageUploadMiddleware");
-const resizeImage = require("../middleware/resizeImage");
-const factory = require("./handlerFactory");
+const categoryModel = require("../../modules/categoryModel");
+const { uploadSingleImage } = require("../../middleware/imageUploadMiddleware");
+const resizeImage = require("../../middleware/resizeImage");
+const factory = require("../handleFactor/handlerFactory");
 
 //upload single image
 const uploadCategoryImage = uploadSingleImage("image");
@@ -34,10 +34,6 @@ const updateCategory = factory.updateOne(categoryModel, "categories");
 // @ access Private
 const deleteCategory = factory.deleteOne(categoryModel, "categories");
 
-// @ dec delete all category
-// @ route Update  /api/vi/category
-// @ access Private
-const deleteAllCategory = factory.deleteAll(categoryModel, "categories");
 
 module.exports = {
   creatCategory,
@@ -45,7 +41,6 @@ module.exports = {
   getOneCategory,
   updateCategory,
   deleteCategory,
-  deleteAllCategory,
   uploadCategoryImage,
   resizeCategoryImage,
 };

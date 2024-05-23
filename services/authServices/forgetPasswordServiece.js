@@ -1,76 +1,26 @@
 const asyncHandler = require("express-async-handler");
-const bcrypt = require("bcrypt");
 const crypto = require("crypto");
-const jwt = require("jsonwebtoken");
-const ApiError = require("../utils/apiError/apiError");
-const userModel = require("../modules/userModel");
-const sendEmail = require("../utils/sendEmail/sendEmail");
-const creatToken = require("../utils/generate token/createToken");
-
-// @ dec sign Up 
-// @ route Post  /api/vi/auth/signUp
-// @ access Public
-const signUp = asyncHandler(async (req, res, next) => {
-  // create user
-  const document = await userModel.create({
-    name: req.body.name,
-    phone: req.body.phone,
-    email: req.body.email,
-    password: req.body.password,
-   
-  });
-
-  //generate token
-  const token = creatToken(document._id);
-
-  //send success response
-  res.status(201).json({
-    status: true,
-    message: `Sucess Create user`,
-    token: token,
-    data: document,
-  });
-});
+const ApiError = require("../../utils/apiError/apiError");
+const userModel = require("../../modules/userModel");
+const sendEmail = require("../../utils/sendEmail/sendEmail");
+const creatToken = require("../../utils/generate token/createToken");
 
 
 
-// @ dec login
-// @ route Post  /api/vi/auth/login
-// @ access Public
-const login = asyncHandler(async (req, res, next) => {
-  //check if user exist & check if password is correct
-
-  const document = await userModel.findOne({ email: req.body.email });
-  if (
-    !document ||
-    !(await bcrypt.compare(req.body.password, document.password))
-  ) {
-    return next(new ApiError("Incorrect email or password.", 400));
-  }
-
-  //generate token
-  const token = creatToken(document._id);
-
-  //send success response to client side
-  res.status(201).json({
-    status: true,
-    message: `Successful login into the app for the ${document.role}`,
-    token: token,
-    data: document,
-  });
-});
+/////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////
 
 // @ dec forget password
 // @ route Post  /api/vi/auth/forgetPassword
 // @ access Public
+
 const forgetPassword = asyncHandler(async (req, res, next) => {
   //get user by email
   const document = await userModel.findOne({ email: req.body.email });
 
   if (!document) {
-    return next(
-      new ApiError(`No user has this email ${req.body.email}`, 404)
-    );
+    return next(new ApiError(`No user has this email ${req.body.email}`, 404));
   }
 
   // if user exist ,generate hash random 6 digits and save it in db
@@ -139,6 +89,13 @@ const forgetPassword = asyncHandler(async (req, res, next) => {
   });
 });
 
+
+
+
+/////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////
+
 // @ dec verify Reset Code
 // @ route Post  /api/vi/auth/verifyCode
 // @ access Public
@@ -170,6 +127,12 @@ const verifyCode = asyncHandler(async (req, res, next) => {
   });
 });
 
+
+
+/////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////
+
 // @ dec  Reset password
 // @ route Post  /api/vi/auth/resetPassword
 // @ access Public
@@ -180,9 +143,7 @@ const resetPassword = asyncHandler(async (req, res, next) => {
   });
 
   if (!document) {
-    return next(
-      new ApiError(`No user has this email ${req.body.email}`, 404)
-    );
+    return next(new ApiError(`No user has this email ${req.body.email}`, 404));
   }
 
   //check if rest code verified
@@ -195,109 +156,42 @@ const resetPassword = asyncHandler(async (req, res, next) => {
   document.passwordRestCode = undefined;
   document.passwordRestExpire = undefined;
   document.passwordRestVerified = undefined;
-  await document.save();
 
   // if everyThing is ok  generate token
-  const token = creatToken(document._id);
+
+  //generate token
+  const accessToken = creatToken(
+    document._id,
+    process.env.JWT_ACCESS_TOKEN_SECRET_KEY,
+    process.env.JWT_EXPIER_ACCESS_TIME_TOKEN
+  );
+  const refreshToken = creatToken(
+    document._id,
+    process.env.JWT_REFRESH_TOKEN_SECRET_KEY,
+    process.env.JWT_EXPIER_REFRESH_TIME_TOKEN
+  );
+
+  document.refreshToken = refreshToken;
+
+  await document.save();
 
   //send success response to client side
   res.status(201).json({
     status: true,
     message: `Successfully updating the password to the account`,
-    token: token,
+    accessToken: accessToken,
+    refreshToken: refreshToken,
     data: document,
   });
 });
 
-// @ dec access protect(user , admin  or driver)
-// make sure the user is logged in
-const protect = asyncHandler(async (req, res, next) => {
-  //check if token exist , if exist get
-  let token;
-  if (
-    req.headers.authorization &&
-    req.headers.authorization.startsWith("Bearer")
-  ) {
-    token = req.headers.authorization.split(" ")[1];
-  }
 
-  if (!token) {
-    return next(
-      new ApiError(
-        "You are not logged in, please log in to access this route",
-        422
-      )
-    );
-  }
 
-  // verify token (no change happnes ,expired token)
-  const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
-
-  //check  if user exists
-  const currentUser = await userModel.findById(decoded.userId);
-  if (!currentUser) {
-    return next(
-      new ApiError(
-        "The user belonging to this token no longer exists",
-        422
-      )
-    );
-  }
-
-  //check user active or no
-  if (currentUser.active === false) {
-    return next(
-      new ApiError(
-        "This account is inactive, please go to the activated account with login",
-        422
-      )
-    );
-  }
-  // check if user change his password after token created
-  if (currentUser.passwordChangedAt) {
-    const passwordChangedTimeStamp = parseInt(
-      currentUser.passwordChangedAt.getTime() / 1000,
-      10
-    );
-
-    // password changed after token created (error)
-    if (passwordChangedTimeStamp > decoded.iat) {
-      return next(
-        new ApiError(
-          "The user recently changed his password, please log in again....",
-          422
-        )
-      );
-    }
-  }
-
-  //using in allowed permision
-  req.userModel = currentUser;
-  next();
-});
-
-// @ dec this fuction check role to user and access allowed data or no
-const allowedTo = (...roles) =>
-  asyncHandler(async (req, res, next) => {
-    //access roles
-    //access register user
-    //check roles equal role with user
-    if (!roles.includes(req.userModel.role)) {
-      return next(
-        new ApiError("you are not allowed to access this route", 403)
-      );
-    }
-
-    next();
-  });
 
 module.exports = {
-  signUp,
   forgetPassword,
-  login,
-  protect,
-  allowedTo,
+  
   verifyCode,
   resetPassword,
-
+  
 };

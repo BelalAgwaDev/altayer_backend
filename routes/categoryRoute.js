@@ -1,15 +1,15 @@
 const express = require("express");
-const authServices = require("../services/authServiece");
+const {uploadToCloudinary} = require("../middleware/cloudinaryMiddleWare");
 const {
   creatCategory,
   getAllCategory,
   getOneCategory,
   updateCategory,
   deleteCategory,
-  deleteAllCategory,
   uploadCategoryImage,
   resizeCategoryImage,
-} = require("../services/categoryService");
+} = require("../services/categoryServices/categoryService");
+const authServices = require("../services/authServices/protect");
 
 const {
   createCatogryValidator,
@@ -41,10 +41,11 @@ router
   .post(
     uploadCategoryImage,
     resizeCategoryImage,
+    uploadToCloudinary,
     createCatogryValidator,
     creatCategory
   )
-  .delete(deleteAllCategory);
+
 
 router
   .route("/:id")

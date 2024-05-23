@@ -1,5 +1,7 @@
+const {deleteImageFromCloudinary} = require("./cloudinaryMiddleWare");
 const ApiError = require("../utils/apiError/apiError");
-const {deleteImage} = require("../utils/deleteImage/deleteImage");
+
+
 
 const handleJwtInvalidSignature = () =>
   new ApiError("Invalid token ,please login again..", 401);
@@ -11,8 +13,8 @@ const globalError = (err, req, res, next) => {
   err.statusCode = err.statusCode || 500;
   err.status = err.status || "error";
 
-  // delete image uploaded in erorr
-  deleteImage(req);
+
+  deleteImageFromCloudinary(req.body.publicId);
   
   if (process.env.NODE_ENV === "development") {
     

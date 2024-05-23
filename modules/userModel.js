@@ -48,7 +48,9 @@ const userSchema = new mongoose.Schema(
     
     verifyAccount:  Boolean,
   
-    
+    refreshToken: String,
+    publicId: String,
+
 
 
 

@@ -1,9 +1,9 @@
 const asyncHandler = require("express-async-handler");
-const ApiError = require("../utils/apiError/apiError");
+const ApiError = require("../../utils/apiError/apiError");
+
 const {
-  deleteImage,
-  deleteImagesInFolder,
-} = require("../utils/deleteImage/deleteImage");
+  deleteImageFromCloudinary,
+} = require("../../middleware/cloudinaryMiddleWare");
 
 //@dec this function used to  create in mongo db
 const creatOne = (model, modelName) =>
@@ -85,7 +85,7 @@ const updateOne = (model, modelName) =>
 
     if (document.image) {
       //delete old image
-      deleteImage(req, document);
+      deleteImageFromCloudinary(document.publicId);
     }
 
     //send success respons
@@ -119,7 +119,7 @@ const deleteOne = (model, modelName) =>
 
     if (document.image) {
       //delete old image
-      deleteImage(req, document);
+      deleteImageFromCloudinary(document.publicId);
     }
 
     //send success respons
@@ -129,28 +129,10 @@ const deleteOne = (model, modelName) =>
     });
   });
 
-//@dec this function used to  delete   data from mongo db
-const deleteAll = (model, modelName) =>
-  asyncHandler(async (req, res, next) => {
-    //this code delete all data
-    await model.deleteMany();
-
-    //delete all images
-    deleteImagesInFolder(modelName);
-
-    //send success respons
-    res.status(204).json({
-      status: true,
-      message: `Sucess To Delete  all data from this ${modelName} `,
-    });
-  });
-
 module.exports = {
   creatOne,
   getAllData,
   getOne,
   updateOne,
   deleteOne,
-  deleteAll,
-  deleteImage,
 };

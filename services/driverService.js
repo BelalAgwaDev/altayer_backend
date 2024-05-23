@@ -1,7 +1,7 @@
 const DriverModel = require("../modules/driverModel");
 const { uploadListOfImage } = require("../middleware/imageUploadMiddleware");
 const resizeImage = require("../middleware/resizeImage");
-const factory = require("./handlerFactory");
+const factory = require("./handleFactor/handlerFactory");
 
 //upload single image
 const uploadDriverImage = uploadListOfImage(["frontNationalIdImage","backNationalIdImage"]);

@@ -24,14 +24,11 @@ exports.signUpValidator = [
       })
     ),
 
-
-
   check("password")
     .notEmpty()
     .withMessage("password required")
     .isLength({ min: 6 })
     .withMessage("password must be at least 6 characters long"),
-
 
   check("phone")
     .optional()
@@ -41,6 +38,19 @@ exports.signUpValidator = [
 ];
 
 exports.loginValidator = [
+  check("refreshToken").notEmpty().withMessage("refresh Token required"),
+
+  validatorMiddleware,
+];
+
+
+exports.tokenRefreshValidator = [
+  check("refreshToken").notEmpty().withMessage("refresh Token required"),
+
+  validatorMiddleware,
+];
+
+exports.logOutValidator = [
   check("email")
     .notEmpty()
     .withMessage("User Email required")

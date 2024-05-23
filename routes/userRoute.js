@@ -1,22 +1,41 @@
 const express = require("express");
-const authServices = require("../services/authServiece");
+const authServices = require("../services/authServices/protect");
 const {
   creatUser,
-
   getAllUser,
   getOneUser,
-  updateUser,
-  updateUserPassword,
+  getLoggedUserData,
+
   deleteUser,
-  deleteAllUser,
+
   uploadUserImage,
   resizeUserImage,
-  getLoggedUserData,
-  updateLoggedUserImage,
-  updateLoggedUserData,
+} = require("../services/userServices/UserService");
+
+const {
   updateLoggedUserPassword,
+} = require("../services/userServices/updateLoggedPassword");
+
+const {
+  updateLoggedUserData,
+} = require("../services/userServices/updateLoggedUserData");
+
+const {
+  updateUserPassword,
+} = require("../services/userServices/updatePassword");
+
+const { updateUser } = require("../services/userServices/updateUser");
+
+const {
+  updateLoggedUserImage,
+} = require("../services/userServices/updateloggetUserImage");
+const {
   deleteLoggedUser,
-} = require("../services/UserService");
+} = require("../services/userServices/deleteLoggedUser");
+
+
+const {uploadToCloudinary} = require("../middleware/cloudinaryMiddleWare");
+
 
 const {
   createUserValidator,
@@ -30,18 +49,8 @@ const {
 
 const router = express.Router();
 
-router
-  .route("/")
-  .post(
-    uploadUserImage,
-    resizeUserImage,
-    createUserValidator,
-    creatUser
-  );
-
-
-
 router.use(authServices.protect);
+
 router.route("/getMe").get(getLoggedUserData, getOneUser);
 router
   .route("/updateMyData")
@@ -49,18 +58,24 @@ router
 router
   .route("/updateMyImage")
   .put(uploadUserImage, resizeUserImage, updateLoggedUserImage);
+
 router
   .route("/updateMyPassword")
   .put(changeLoggedUserPasswordValidator, updateLoggedUserPassword);
 router.route("/deleteMe").delete(deleteLoggedUser);
 
 router.use(authServices.allowedTo("admin"));
-router.route("/").get(getAllUser).delete(deleteAllUser);
+
+router
+  .route("/")
+  .post(uploadUserImage, resizeUserImage, uploadToCloudinary,createUserValidator, creatUser);
+
+router.route("/").get(getAllUser);
 
 router
   .route("/:id")
   .get(getUserValidator, getOneUser)
-  .put(uploadUserImage, resizeUserImage, updateUserValidator, updateUser)
+  .put(uploadUserImage, resizeUserImage,uploadToCloudinary, updateUserValidator, updateUser)
   .delete(deleteUserValidator, deleteUser);
 
 router
