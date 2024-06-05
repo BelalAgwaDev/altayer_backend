@@ -1,13 +1,25 @@
 const subCategoryModel = require("../../modules/subCategoryModel");
 const { uploadSingleImage } = require("../../middleware/imageUploadMiddleware");
-const resizeImage = require("../../middleware/resizeImage");
+const {resizeImage} = require("../../middleware/resizeImage");
 const factory = require("../handleFactor/handlerFactory");
+const { uploadToCloudinary } = require('../../middleware/cloudinaryMiddleWare')
 
 //upload single image
 const uploadSubCategoryImage = uploadSingleImage("image");
 
 // rssize image before upload
 const resizeSubCategoryImage = resizeImage("subCategory");
+
+// upload image in cloud
+const uploadImageInCloud = uploadToCloudinary()
+
+
+const setCategoryIdInBody=(req,res,next)=>{
+  //nested route
+  if (!req.body.category) req.body.category =  req.params.categoryId ;
+  next();
+
+}
 
 // @ dec create subCategory
 // @ route Post  /api/vi/subCategory
@@ -34,16 +46,11 @@ const updateSubCategory = factory.updateOne(subCategoryModel, "subCategory");
 // @ access Private
 const deleteSubCategory = factory.deleteOne(subCategoryModel, "subCategory");
 
-// @ dec delete all subCategory
-// @ route Update  /api/vi/subCategory
-// @ access Private
-const deleteAllSubCategory = factory.deleteAll(subCategoryModel, "subCategory");
 
-//@dec nested route
-const setCategoryIdToBody = (req, res, next) => {
-  if (!req.body.category) req.body.category = req.params.categoryId;
-  next();
-};
+
+// @ dec delete photo from cloud using when update
+const deleteImageBeforeUpdate = factory.deletePhotoFromCloud(subCategoryModel)
+
 
 const createFilterObject = (req, res, next) => {
   let filterObject = {};
@@ -57,10 +64,11 @@ module.exports = {
   getAllSubCategory,
   getOneSubCategory,
   updateSubCategory,
-  deleteAllSubCategory,
+  uploadImageInCloud,
   deleteSubCategory,
   uploadSubCategoryImage,
   resizeSubCategoryImage,
-  setCategoryIdToBody,
+  deleteImageBeforeUpdate,
   createFilterObject,
+  setCategoryIdInBody
 };

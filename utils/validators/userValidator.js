@@ -73,6 +73,7 @@ exports.updateUserValidator = [
       })
     ),
 
+
   check("phone")
     .optional()
     .isMobilePhone(["ar-EG", "ar-SA"])

@@ -1,6 +1,6 @@
 
 const asyncHandler = require("express-async-handler");
-const userModel = require("../../modules/userModel");
+const userModel = require("../../../modules/userModel");
 
 
 // @ dec update logged user data

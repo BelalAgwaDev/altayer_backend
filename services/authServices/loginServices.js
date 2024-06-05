@@ -40,7 +40,6 @@ exports.login = asyncHandler(async (req, res, next) => {
     status: true,
     message: `Successful login into the app for the ${document.role}`,
     accessToken: accessToken,
-    refreshToken: refreshToken,
     data: document,
   });
 });

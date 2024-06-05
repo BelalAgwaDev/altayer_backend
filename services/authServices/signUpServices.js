@@ -36,7 +36,6 @@ exports.signUp = asyncHandler(async (req, res, next) => {
     status: true,
     message: `User successfully signed up`,
     accessToken: accessToken,
-    refreshToken: refreshToken,
     data: document,
   });
 });

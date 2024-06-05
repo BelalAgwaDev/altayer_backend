@@ -1,8 +1,8 @@
 const bcrypt = require("bcrypt");
 const asyncHandler = require("express-async-handler");
-const userModel = require("../../modules/userModel");
+const userModel = require("../../../modules/userModel");
 
-const creatToken = require("../../utils/generate token/createToken");
+const creatToken = require("../../../utils/generate token/createToken");
 
 
 // @ dec update logged user password
@@ -27,6 +27,14 @@ exports.updateLoggedUserPassword = asyncHandler(async (req, res, next) => {
     process.env.JWT_ACCESS_TOKEN_SECRET_KEY,
     process.env.JWT_EXPIER_ACCESS_TIME_TOKEN
   );
+  const refreshToken = creatToken(
+    document._id,
+    process.env.JWT_REFRESH_TOKEN_SECRET_KEY,
+    process.env.JWT_EXPIER_REFRESH_TIME_TOKEN
+  );
+
+  document.refreshToken = refreshToken;
+  await document.save();
 
 
   res.status(200).json({

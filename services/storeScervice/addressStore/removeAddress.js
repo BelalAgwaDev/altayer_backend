@@ -11,7 +11,7 @@ exports.removeAddressFromStore = asyncHandler(async (req, res, next) => {
     { user: req.userModel._id },
     {
       $pull: {
-        StoreAddress: req.params.addressId,
+        StoreAddress: { _id: req.params.id }, 
       },
     },
     {

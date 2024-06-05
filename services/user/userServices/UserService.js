@@ -1,15 +1,21 @@
 const asyncHandler = require("express-async-handler");
-const userModel = require("../../modules/userModel");
-const resizeImage = require("../../middleware/resizeImage");
-const { uploadSingleImage } = require("../../middleware/imageUploadMiddleware");
+const userModel = require("../../../modules/userModel");
+const {resizeImage} = require("../../../middleware/resizeImage");
+const { uploadSingleImage } = require("../../../middleware/imageUploadMiddleware");
+const { uploadToCloudinary } = require("../../../middleware/cloudinaryMiddleWare");
 
-const factory = require("../handleFactor/handlerFactory");
+const factory = require("../../handleFactor/handlerFactory");
 
 //upload single image
 const uploadUserImage = uploadSingleImage("image");
 
 // rssize image before upload
 const resizeUserImage = resizeImage("user");
+
+
+// upload image in cloud
+const uploadImageInCloud = uploadToCloudinary();
+
 
 // @ dec creat User
 // @ route Post  /api/vi/user
@@ -43,8 +49,8 @@ const getLoggedUserData = asyncHandler(async (req, res, next) => {
 
 // @ dec add logged user data in body
 // @ access private/protect
-exports.addLoggedUserDataInBody = asyncHandler(async (req, res, next) => {
-  req.body.id = req.userModel._id;
+const addLoggedUserDataInBody = asyncHandler(async (req, res, next) => {
+  req.body.user = req.userModel._id;
   next();
 });
 
@@ -56,4 +62,6 @@ module.exports = {
   deleteUser,
   uploadUserImage,
   resizeUserImage,
+  uploadImageInCloud,
+  addLoggedUserDataInBody
 };

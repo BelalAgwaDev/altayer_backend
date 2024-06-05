@@ -1,39 +1,54 @@
-const asyncHandler = require("express-async-handler");
-const addressModel = require("../../modules/userAddressModel");
+const addressModel = require('../../../modules/userAddressModel')
 
-const factory = require("../handleFactor/handlerFactory");
+const factory = require('../../handleFactor/handlerFactory')
+
+//passing data to body in create 
+const passingDataToReqBody = (req, res, next) => {
+  const { latitude, longitude, ...rest } = req.body
+
+  req.body = {
+    ...rest,
+    location: {
+      type: 'Point',
+      coordinates: [longitude, latitude],
+    },
+  };
+
+  next();
+}
+
+
+//using to get all adress user login
+const createFilterObject = (req, res, next) => {
+  req.filterObject = { user: req.body.user }
+  next()
+}
 
 // @ dec create address
 // @ route Post  /api/vi/address
-// @ access public
-const creatAddress = () =>
-  asyncHandler(async (req, res) => {
-    const { latitude, longitude, ...rest } = req.body;
+// @ access protected
+const creatAddress = factory.creatOne(addressModel, 'address')
 
-    //this code to create
-    const document = await addressModel.create({
-      ...rest,
-      location: {
-        type: "Point",
-        coordinates: [longitude, latitude],
-      },
-    });
-
-    //send success response
-    res.status(201).json({
-      status: true,
-      message: `Successful to create user address`,
-      data: document,
-    });
-  });
+// @ dec get all  address data
+// @ route Get  /api/vi/address
+// @ access protected
+const getAllAddress = factory.getAllData(addressModel, 'address')
 
 // @ dec delete specific address
 // @ route Update  /api/vi/address/id
-// @ access public
-const deleteAddress = factory.deleteOne(addressModel, "address");
+// @ access protected
+const deleteAddress = factory.deleteOne(addressModel, 'address')
+
+// @ dec update specific address
+// @ route Update  /api/vi/address/id
+// @ access protected
+const updateAddress = factory.updateOne(addressModel, 'address')
 
 module.exports = {
   creatAddress,
-
+  passingDataToReqBody,
   deleteAddress,
-};
+  getAllAddress,
+  createFilterObject,
+  updateAddress,
+}

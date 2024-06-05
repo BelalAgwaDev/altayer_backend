@@ -38,7 +38,21 @@ exports.signUpValidator = [
 ];
 
 exports.loginValidator = [
-  check("refreshToken").notEmpty().withMessage("refresh Token required"),
+  
+  check("email")
+    .notEmpty()
+    .withMessage("User Email required")
+    .isEmail()
+    .withMessage("Invalid email address format"),
+
+  check("password")
+    .notEmpty()
+    .withMessage("password required")
+    .isLength({ min: 6 })
+    .withMessage("password must be at least 6 characters long"),
+
+
+
 
   validatorMiddleware,
 ];
@@ -51,17 +65,8 @@ exports.tokenRefreshValidator = [
 ];
 
 exports.logOutValidator = [
-  check("email")
-    .notEmpty()
-    .withMessage("User Email required")
-    .isEmail()
-    .withMessage("Invalid email address format"),
+  check("refreshToken").notEmpty().withMessage("refresh Token required"),
 
-  check("password")
-    .notEmpty()
-    .withMessage("user password required")
-    .isLength({ min: 6 })
-    .withMessage("password must be at least 6 characters "),
 
   validatorMiddleware,
 ];

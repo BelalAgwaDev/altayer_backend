@@ -7,34 +7,33 @@ const {
   getLoggedUserData,
 
   deleteUser,
-
+uploadImageInCloud,
   uploadUserImage,
   resizeUserImage,
-} = require("../services/userServices/UserService");
+} = require("../services/user/userServices/UserService");
 
 const {
   updateLoggedUserPassword,
-} = require("../services/userServices/updateLoggedPassword");
+} = require("../services/user/userServices/updateLoggedPassword");
 
 const {
   updateLoggedUserData,
-} = require("../services/userServices/updateLoggedUserData");
+} = require("../services/user/userServices/updateLoggedUserData");
 
 const {
   updateUserPassword,
-} = require("../services/userServices/updatePassword");
+} = require("../services/user/userServices/updatePassword");
 
-const { updateUser } = require("../services/userServices/updateUser");
+const { updateUser,deleteImageBeforeUpdate } = require("../services/user/userServices/updateUser");
 
 const {
   updateLoggedUserImage,
-} = require("../services/userServices/updateloggetUserImage");
+} = require("../services/user/userServices/updateloggetUserImage");
 const {
   deleteLoggedUser,
-} = require("../services/userServices/deleteLoggedUser");
+} = require("../services/user/userServices/deleteLoggedUser");
 
 
-const {uploadToCloudinary} = require("../middleware/cloudinaryMiddleWare");
 
 
 const {
@@ -57,7 +56,7 @@ router
   .put(updateLoggedUserValidator, updateLoggedUserData);
 router
   .route("/updateMyImage")
-  .put(uploadUserImage, resizeUserImage, updateLoggedUserImage);
+  .put(uploadUserImage, resizeUserImage, uploadImageInCloud,updateLoggedUserImage);
 
 router
   .route("/updateMyPassword")
@@ -68,14 +67,15 @@ router.use(authServices.allowedTo("admin"));
 
 router
   .route("/")
-  .post(uploadUserImage, resizeUserImage, uploadToCloudinary,createUserValidator, creatUser);
+  .post(uploadUserImage, resizeUserImage,uploadImageInCloud ,createUserValidator, creatUser);
 
 router.route("/").get(getAllUser);
 
 router
   .route("/:id")
   .get(getUserValidator, getOneUser)
-  .put(uploadUserImage, resizeUserImage,uploadToCloudinary, updateUserValidator, updateUser)
+  .put(uploadUserImage, resizeUserImage,uploadImageInCloud,
+    updateUserValidator,deleteImageBeforeUpdate,updateUser)
   .delete(deleteUserValidator, deleteUser);
 
 router

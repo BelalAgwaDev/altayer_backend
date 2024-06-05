@@ -1,6 +1,6 @@
 const express = require("express");
 const authServices = require("../services/authServices/protect");
-const UserService = require("../services/userServices/UserService");
+const UserService = require("../services/user/userServices/UserService");
 const {
   addNewAddressToStore,
 } = require("../services/storeScervice/addressStore/addAddress");
@@ -19,9 +19,8 @@ const router = express.Router();
 router.use(authServices.protect);
 
 router
-.route("/")
-.post(
-  UserService.addLoggedUserDataInBody,
+.route("/:id")
+.get(
   getStoreAddress
 );
 
@@ -32,14 +31,16 @@ router.use(authServices.allowedTo("admin","storeOwner"));
 router
 .route("/")
 .post(
-  UserService.addLoggedUserDataInBody,
+ UserService.addLoggedUserDataInBody,
   addNewAddressToStore
 );
 
 
 router
-  .route("/:addressStoreId")
-  .delete(  UserService.addLoggedUserDataInBody, removeAddressFromStore)
+  .route("/:id")
+  .delete(
+     UserService.addLoggedUserDataInBody,
+     removeAddressFromStore)
 
 
 module.exports = router;

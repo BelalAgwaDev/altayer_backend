@@ -180,7 +180,6 @@ const resetPassword = asyncHandler(async (req, res, next) => {
     status: true,
     message: `Successfully updating the password to the account`,
     accessToken: accessToken,
-    refreshToken: refreshToken,
     data: document,
   });
 });

@@ -1,38 +1,34 @@
-const asyncHandler = require("express-async-handler");
-const ApiError = require("../../../utils/apiError/apiError");
-const storeModel = require("../../../modules/storeModel");
+const asyncHandler = require('express-async-handler')
+const ApiError = require('../../../utils/apiError/apiError')
+const storeModel = require('../../../modules/storeModel')
 
 // @ dec get  store
 // @ Depending on the condition of the store, whether it is occupied, open or open
 // @ route get  /api/vi/store/:storeId
 // @ access protected/User/store owner
 exports.getStore = asyncHandler(async (req, res, next) => {
-  const { storeId } = req.params;
+  const { id } = req.params
 
-  const store = await storeModel.findById(storeId);
+  const store = await storeModel.findById(id)
 
   if (!store) {
     return next(
-      new ApiError(`Faild To get store data from this id ${storeId}`, 404)
-    );
+      new ApiError(`Faild To get store data from this id ${id}`, 404),
+    )
   }
 
-  let status;
-  if (store.isOpen) {
-    status = store.storeIsBusy ? "busy" : "open";
-  } else {
-    status = "close";
-  }
+
 
   const storeWithStatus = {
     ...store.toObject(),
-    status: status,
-  };
+    status:  store.storeStatus,
+  }
+
 
   //send success response
   res.status(201).json({
     status: true,
     message: `Sucess to get all stores`,
     data: storeWithStatus,
-  });
-});
+  })
+})

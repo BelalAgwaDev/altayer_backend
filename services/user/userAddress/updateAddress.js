@@ -3,10 +3,14 @@ const ApiError = require("../../../utils/apiError/apiError");
 const addressModel = require("../../../modules/userAddressModel");
 
 
+
+
+
+
 // @ dec update specific address
 // @ route Update  /api/vi/address/id
 // @ access public
-exports.updateAddress = () =>
+exports.updateAddress = 
   asyncHandler(async (req, res, next) => {
     const { id } = req.params;
     const { latitude, longitude, ...rest } = req.body;
@@ -32,8 +36,9 @@ exports.updateAddress = () =>
     }
 
     //send success respons
-    res.status(204).json({
+    res.status(200).json({
       status: true,
       message: `Sucess To Update address data from this id`,
+      data:document
     });
   });

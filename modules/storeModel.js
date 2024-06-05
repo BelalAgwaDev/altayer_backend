@@ -1,24 +1,25 @@
-const mongoose = require("mongoose");
-const moment = require("moment-timezone");
+const mongoose = require('mongoose')
+const moment = require('moment-timezone')
 
 const StoreSchema = mongoose.Schema(
   {
     StoreName: {
       type: String,
       trim: true,
-      required: [true, "store Name is Required"],
+      unique: [true, 'store Name must be uniqe'],
+      required: [true, 'store Name is Required'],
     },
 
     StoreDescription: {
       type: String,
       trim: true,
-      required: [true, "store description is Required"],
+      required: [true, 'store description is Required'],
     },
 
     rating: {
       type: Number,
-      min: [1, "rating must be above or equal 1.0"],
-      max: [5, "rating must be blew or equal 5.0"],
+      min: [1, 'rating must be above or equal 1.0'],
+      max: [5, 'rating must be blew or equal 5.0'],
     },
 
     ratingQuantity: {
@@ -27,36 +28,38 @@ const StoreSchema = mongoose.Schema(
     },
 
     deliveryTime: String,
-    minimumPurchases: mongoose.Types.Decimal128,
-    deliveryCharge: mongoose.Types.Decimal128,
+    minimumPurchases:Number,
+    deliveryCharge: Number,
     preOrder: Boolean,
 
     legalStoreName: {
       type: String,
       trim: true,
-      required: [true, "Legal store Name is Required"],
+      unique: [true, 'Legal store Name must be uniqe'],
+      required: [true, 'Legal store Name is Required'],
     },
 
     deliveryBy: {
       type: String,
-      enum: ["Store", "applicationDelivery", "StoreAndApplicationDelivery"],
-      default: "applicationDelivery",
+      enum: ['Store', 'applicationDelivery', 'StoreAndApplicationDelivery'],
+      default: 'applicationDelivery',
     },
 
-    openTime: { type: String, required: true },
-    closeTime: { type: String, required: true },
-    timezone: { type: String, default: "Africa/Cairo" },
-    isBusy: { type: Boolean, default: false },
-    isBusyManual: { type: Boolean, default: false },
+    openTime: { type: String },
+    closeTime: { type: String },
+    timezone: { type: String, default: 'Africa/Cairo' },
+
     busyHours: [{ start: String, end: String }],
 
     storeLogoImage: String,
+    storeLogoImagePublicId: String,
+    storeCoverImagePublicId: String,
     storeCoverImage: String,
 
     category: {
       type: mongoose.Schema.ObjectId,
-      ref: "Category",
-      required: [true, "category id Required"],
+      ref: 'Category',
+      required: [true, 'category id Required'],
     },
 
     StoreAddress: [
@@ -69,63 +72,82 @@ const StoreSchema = mongoose.Schema(
             required: true,
           },
           coordinates: {
-            type:[Number],
+            type: [Number],
             required: true,
           },
         },
         storeRegion: {
           type: String,
           trim: true,
-          required: [true, "store Region is Required"],
-          minlength: [3, "Too short store Region"],
-          maxlength: [200, "Too long store Region"],
+          required: [true, 'store Region is Required'],
+          minlength: [3, 'Too short store Region'],
+          maxlength: [200, 'Too long store Region'],
         },
       },
     ],
+    manuallySetStatus: {
+      type: String,
+      enum: ['open', 'closed', 'busy'],
+    },
 
     user: {
       type: mongoose.Schema.ObjectId,
-      ref: "User",
+      ref: 'User',
     },
   },
-  { timestamps: true }
-);
+  { timestamps: true },
+)
 
 
 
-StoreSchema.virtual("isOpen").get(function () {
-  const now = moment.tz(this.timezone);
-  const openingMoment = moment.tz(
-    `${now.format("YYYY-MM-DD")} ${this.openTime}`,
-    this.timezone
-  );
-  const closingMoment = moment.tz(
-    `${now.format("YYYY-MM-DD")} ${this.closeTime}`,
-    this.timezone
-  );
 
-  return now.isBetween(openingMoment, closingMoment);
-});
 
-StoreSchema.virtual("storeIsBusy").get(function () {
-  if (this.isBusyManual) {
-    return this.isBusy;
+StoreSchema.virtual('storeStatus').get(function () {
+  if (this.manuallySetStatus) {
+    return this.manuallySetStatus;
   }
 
   const now = moment.tz(this.timezone);
-  return this.busyHours.some((busyTime) => {
+  const openingMoment = moment.tz(
+    `${now.format('YYYY-MM-DD')} ${this.openTime}`,
+    this.timezone
+  );
+  const closingMoment = moment.tz(
+    `${now.format('YYYY-MM-DD')} ${this.closeTime}`,
+    this.timezone
+  );
+
+  const isStoreOpen = now.isBetween(openingMoment, closingMoment);
+  const isStoreBusy = this.busyHours.some((busyTime) => {
     const busyStart = moment.tz(
-      `${now.format("YYYY-MM-DD")} ${busyTime.start}`,
+      `${now.format('YYYY-MM-DD')} ${busyTime.start}`,
       this.timezone
     );
     const busyEnd = moment.tz(
-      `${now.format("YYYY-MM-DD")} ${busyTime.end}`,
+      `${now.format('YYYY-MM-DD')} ${busyTime.end}`,
       this.timezone
     );
     return now.isBetween(busyStart, busyEnd);
   });
+
+  if (!isStoreOpen) {
+    return 'closed';
+  }
+
+  if (isStoreBusy) {
+    return 'busy';
+  }
+
+  return 'open';
 });
 
-const StoreModel = mongoose.model("Store", StoreSchema);
+StoreSchema.set('toObject', { virtuals: true });
+StoreSchema.set('toJSON', { virtuals: true });
+
+StoreSchema.index({ 'StoreAddress.location': '2dsphere' });
+
+
+
+const StoreModel = mongoose.model('Store', StoreSchema);
 
 module.exports = StoreModel;

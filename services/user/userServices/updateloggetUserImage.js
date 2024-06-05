@@ -1,9 +1,9 @@
 const asyncHandler = require("express-async-handler");
-const userModel = require("../../modules/userModel");
+const userModel = require("../../../modules/userModel");
 
 const {
   deleteImageFromCloudinary,
-} = require("../../middleware/cloudinaryMiddleWare");
+} = require("../../../middleware/cloudinaryMiddleWare");
 
 // @ dec update logged user image
 // @ route Update  /api/vi/user/updateMyImage
@@ -18,6 +18,9 @@ exports.updateLoggedUserImage = asyncHandler(async (req, res, next) => {
   }
 
   document.image = req.body.image;
+  document.publicId = req.body.publicId;
+
+  
   await document.save();
 
   res.status(200).json({

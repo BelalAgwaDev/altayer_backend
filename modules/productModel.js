@@ -1,24 +1,24 @@
 const mongoose = require("mongoose");
 
 const productSchema = mongoose.Schema({
-  name: { type: String, required: true },
+  title: { type: String, required: true },
   description: { type: String, required: true },
   price: { type: Number, required: true },
   discountAfterPrice: { type: Number },
-  subCategory: [{
+  subCategory: {
     type: mongoose.Schema.ObjectId,
     ref: "Category",
     required: [true, "Category id Required"],
-  }],
+  },
   category: {
     type: mongoose.Schema.ObjectId,
     ref: "subCategory",
     required: [true, "sub Category id Required"],
   },
-  productRelated: [{ type: mongoose.Schema.ObjectId, ref: "Product" }],
   anyNotes: { type: String },
 
-  image: [{ type: String }],
+  image: { type: String },
+  publicId: { type: String },
   availability: { type: Boolean, default: true },
   unitOfSale: { type: String },
 
@@ -51,7 +51,7 @@ const productSchema = mongoose.Schema({
   ],
 
   
-  rating: {
+  ratingAverage: {
     type: Number,
     min: [1, "rating must be above or equal 1.0"],
     max: [5, "rating must be blew or equal 5.0"],

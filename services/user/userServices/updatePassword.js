@@ -1,8 +1,8 @@
 const bcrypt = require("bcrypt");
 const asyncHandler = require("express-async-handler");
-const userModel = require("../../modules/userModel");
+const userModel = require("../../../modules/userModel");
 
-const ApiError = require("../../utils/apiError/apiError");
+const ApiError = require("../../../utils/apiError/apiError");
 
 // @ dec update  User Password
 // @ route Update  /api/vi/user/changePassword/id

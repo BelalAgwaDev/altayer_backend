@@ -58,17 +58,11 @@ const userSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-const setImageUrl = (doc) => {
-  //return image base url + image name
-  if (doc) {
-    const imageUrl = `${process.env.BASE_URL}/user/${doc}`;
-    return imageUrl;
-  }
-};
+
 
 //work in create data
 userSchema.pre("save", async function (next) {
-  this.image = setImageUrl(this.image);
+
   if (!this.isModified("password")) return next();
   //hashing user password
   this.password = await bcrypt.hash(this.password, 12);

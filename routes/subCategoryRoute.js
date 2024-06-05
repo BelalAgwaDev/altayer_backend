@@ -6,11 +6,12 @@ const {
   getOneSubCategory,
   updateSubCategory,
   deleteSubCategory,
-  deleteAllSubCategory,
   uploadSubCategoryImage,
   resizeSubCategoryImage,
-  setCategoryIdToBody,
-  createFilterObject
+  uploadImageInCloud,
+  createFilterObject,
+  setCategoryIdInBody,
+  deleteImageBeforeUpdate
 } = require("../services/subCategoryServices/subCategoryService");
 
 const {
@@ -35,11 +36,12 @@ router
   .post(
     uploadSubCategoryImage,
     resizeSubCategoryImage,
-    setCategoryIdToBody,
+    setCategoryIdInBody,
     createSubCatogryValidator,
+    uploadImageInCloud,
     creatSubCategory
   )
-  .delete(deleteAllSubCategory);
+  ;
 
 
 
@@ -49,6 +51,8 @@ router
     uploadSubCategoryImage,
     resizeSubCategoryImage,
     updateSubCatogryValidator,
+    uploadImageInCloud,
+    deleteImageBeforeUpdate,
     updateSubCategory
   )
 

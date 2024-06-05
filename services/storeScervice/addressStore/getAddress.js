@@ -5,9 +5,10 @@ const storeModel = require("../../../modules/storeModel");
 // @ route get  /api/vi/store/address
 // @ access protected/StoreOwner
 exports.getStoreAddress = asyncHandler(async (req, res, next) => {
+  const { id } = req.params
   const document = await storeModel
-    .findById({ user: req.userModel._id })
-    .populate("StoreAddress");
+    .find({_id: id}, 'StoreAddress')
+ 
 
   //send success response
   res.status(201).json({
