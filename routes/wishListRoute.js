@@ -11,6 +11,7 @@ const {
 
 const {
   creatWishListValidator,
+  deleteItemFromWishListValidator,
 } = require('../utils/validators/wishListValidator')
 
 const router = express.Router({ mergeParams: true })
@@ -21,22 +22,16 @@ router.use(authServices.protect, authServices.allowedTo('user'))
 
 router
   .route('/')
-  .post(
-    getLoggedUserData,
-    creatWishListValidator,
-    addProductOrStoreInWishList,
-  )
+  .post(getLoggedUserData, creatWishListValidator, addProductOrStoreInWishList)
   .get(getLoggedUserData, getAllProductOrStoreFromWishList)
+  .delete(
+    authServices.allowedTo('admin', 'user'),
+    getLoggedUserData,
+    deleteItemFromWishListValidator,
+    removeProductOrStoreFromWishList,
+  )
 
-// router
-//   .route('/:id')
-//   .put(
-//     authServices.allowedTo('user'),
-//     addLoggedUserDataInBody,
-//     updateReviewValidator,
-//     updateReview
-//   )
 
-// .delete(authServices.allowedTo('admin','user'), addLoggedUserDataInBody,deleteReviewValidator,deleteReview)
+
 
 module.exports = router

@@ -2,6 +2,7 @@ const { check } = require('express-validator')
 const validatorMiddleware = require('../../middleware/validatorMiddleware')
 const productModel = require('../../modules/productModel')
 const storeModel = require('../../modules/storeModel')
+const userModel = require('../../modules/userModel')
 
 
 exports.creatWishListValidator = [
@@ -41,19 +42,20 @@ exports.creatWishListValidator = [
 ]
 
 
-exports.deleteReviewValidator = [
+exports.deleteItemFromWishListValidator = [
   check('id')
     .isMongoId()
-    .withMessage('Invalid Review id format')
+    .withMessage('Invalid product or store  id format')
     .custom((val, { req }) => {
       //check review ownership before update
       if (req.userModel.role === 'user') {
-        return productModel.findById(val).then((review) => {
+
+        return userModel.findOne({'wishList._id' : req.body.id, }).then((review) => {
           if (!review) {
-            return Promise.reject(new Error('there is no review with id'))
+            return Promise.reject(new Error('there is no product or store  with this id'))
           }
 
-          if (review.user._id.toString() !== req.body.user.toString()) {
+          if (review._id.toString() !== req.params.id.toString()) {
             return Promise.reject(
               new Error('your are not allowed to perform this action'),
             )
