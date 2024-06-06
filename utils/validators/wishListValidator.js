@@ -12,7 +12,6 @@ exports.creatWishListValidator = [
     .withMessage('Invalid product id format')
     .custom((val, { req }) =>
       //check if logged user create review before
-
       productModel.findById({ _id: req.body.product }).then((product) => {
         if (!product) {
           return Promise.reject(
@@ -47,15 +46,15 @@ exports.deleteItemFromWishListValidator = [
     .isMongoId()
     .withMessage('Invalid product or store  id format')
     .custom((val, { req }) => {
-      //check review ownership before update
+      //check whichList ownership before update
       if (req.userModel.role === 'user') {
 
-        return userModel.findOne({'wishList._id' : req.body.id, }).then((review) => {
-          if (!review) {
+        return userModel.findOne({'wishList._id' : req.body.id, }).then((whichList) => {
+          if (!whichList) {
             return Promise.reject(new Error('there is no product or store  with this id'))
           }
 
-          if (review._id.toString() !== req.params.id.toString()) {
+          if (whichList._id.toString() !== req.params.id.toString()) {
             return Promise.reject(
               new Error('your are not allowed to perform this action'),
             )
