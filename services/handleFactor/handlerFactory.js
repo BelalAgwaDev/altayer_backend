@@ -136,6 +136,7 @@ const updateOne = (model, modelName) =>
       )
     }
 
+    document.save();
     //send success respons
     res.status(200).json({
       status: true,
@@ -174,6 +175,8 @@ const deleteOne = (model, modelName) =>
       //delete old image
       deleteImageFromCloudinary(document.publicId)
     }
+
+    await document.deleteOne();
 
     //send success respons
     res.status(200).json({

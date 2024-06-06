@@ -34,8 +34,16 @@ exports.getAllStoreNearbyInUser = asyncHandler(async (req, res, next) => {
         category: new mongoose.Types.ObjectId(category),
       },
     },
+    {
+      $lookup: {
+        from: 'reviews', 
+        localField: '_id',
+        foreignField: 'store', 
+        as: 'reviews'
+      }
+    },
     { $limit: 10 }
-  ]);
+  ])
 
 
 

@@ -4,6 +4,20 @@ const reviewModel = require('../../modules/reviewModel')
 
 const factory = require('../handleFactor/handlerFactory')
 
+const createFilterObject = (req, res, next) => {
+  let filterObject = {};
+  if (req.params.storeId) filterObject = { store: req.params.storeId };
+  req.filterObject = filterObject;
+  next();
+};
+
+
+const setStoreIdInBody=(req,res,next)=>{
+  //nested route
+  if (!req.body.store) req.body.store =  req.params.storeId ;
+  next();
+
+}
 
 // @ dec create reviews
 // @ route Post  /api/vi/reviews
@@ -39,4 +53,13 @@ module.exports = {
   getOneReview,
   updateReview,
   deleteReview,
+  setStoreIdInBody,
+  createFilterObject
+
+
 }
+
+
+
+
+

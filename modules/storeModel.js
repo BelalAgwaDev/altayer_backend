@@ -16,13 +16,13 @@ const StoreSchema = mongoose.Schema(
       required: [true, 'store description is Required'],
     },
 
-    rating: {
+    ratingsAverage: {
       type: Number,
       min: [1, 'rating must be above or equal 1.0'],
       max: [5, 'rating must be blew or equal 5.0'],
     },
 
-    ratingQuantity: {
+    ratingsQuantity: {
       type: Number,
       default: 0,
     },
@@ -99,7 +99,12 @@ const StoreSchema = mongoose.Schema(
 )
 
 
-
+//mongose query middlware
+StoreSchema.virtual("reviews", {
+  ref: "Review",
+  foreignField: "store",
+  localField: "_id",
+});
 
 
 StoreSchema.virtual('storeStatus').get(function () {

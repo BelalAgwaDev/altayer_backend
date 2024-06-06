@@ -9,7 +9,7 @@ const storeModel = require('../../../modules/storeModel')
 exports.getStore = asyncHandler(async (req, res, next) => {
   const { id } = req.params
 
-  const store = await storeModel.findById(id)
+  const store = await storeModel.findById(id).populate("reviews")
 
   if (!store) {
     return next(

@@ -1,4 +1,6 @@
 const express = require('express')
+const  reviewRoute  = require('./reviewRoute')
+
 const authServices = require('../services/authServices/protect')
 const { createStoreValidator } = require('../utils/validators/storeValidator')
 const {
@@ -44,6 +46,13 @@ const {
 } = require('../services/storeScervice/store/updateImage')
 
 const router = express.Router()
+
+
+
+//post  /store/storeId/reviews
+//Get  /store/storeId/reviews
+//Get  /store/storeId/reviews/reviewId
+router.use("/:storeId/reviews", reviewRoute);
 
 router.use(authServices.protect)
 
