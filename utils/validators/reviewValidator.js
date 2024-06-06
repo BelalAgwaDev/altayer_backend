@@ -24,7 +24,6 @@ exports.createReviewValidator = [
     .custom((val, { req }) =>
       //check if logged user create review before
 
-
       reviewModel
         .findOne({ user: req.body.user, store: req.body.store })
         .then((review) => {

@@ -57,7 +57,6 @@ const userSchema = new mongoose.Schema(
       {
         product: { type: mongoose.Schema.Types.ObjectId, ref: "Product" },
         store: { type: mongoose.Schema.Types.ObjectId, ref: "Store" },
-        quantity: { type: Number, default: 1 },
       },
     ]
 

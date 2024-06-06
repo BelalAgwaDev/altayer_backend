@@ -7,6 +7,7 @@ const addressStoreRoute = require("./addressStoreRoute");
 const storeRoute = require("./StoreRoute");
 const productRoute = require("./productRoute");
 const reviewRoute = require("./reviewRoute");
+const wishListRoute = require("./wishListRoute");
 
 
 
@@ -21,6 +22,7 @@ const mountRoute = (app) => {
     app.use("/v1/api/reviews", reviewRoute);
     app.use("/v1/api/store", storeRoute);
     app.use("/v1/api/product", productRoute);
+    app.use("/v1/api/wishList", wishListRoute);
   };
   
 

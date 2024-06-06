@@ -6,7 +6,7 @@ const authServices = require('../services/authServices/protect')
 const {addLoggedUserDataInBody} = require('../services/user/userServices/UserService')
 
 const {
-createReviewValidator,updateReviewValidator,deleteReviewValidator
+createReviewValidator,updateReviewValidator,deleteReviewValidator,getReviewValidator
 } = require('../utils/validators/reviewValidator')
 
 
@@ -15,7 +15,7 @@ const router = express.Router({mergeParams:true})
 
 router.route('/').get(createFilterObject,getAllReviews)
 
-router.route('/:id').get(getOneReview)
+router.route('/:id').get(getReviewValidator,getOneReview)
 
 router.use(authServices.protect)
 
