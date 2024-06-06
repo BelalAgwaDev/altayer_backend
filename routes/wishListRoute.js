@@ -1,32 +1,32 @@
 const express = require('express')
 const {
-addProductOrStoreInWishList,getAllProductOrStoreFromWishList,removeProductOrStoreFromWishList
+  addProductOrStoreInWishList,
+  getAllProductOrStoreFromWishList,
+  removeProductOrStoreFromWishList,
 } = require('../services/wishListServices/wishList')
 const authServices = require('../services/authServices/protect')
-const {getLoggedUserData} = require('../services/user/userServices/UserService')
+const {
+  getLoggedUserData,
+} = require('../services/user/userServices/UserService')
 
 const {
-creatWishListValidator} = require('../utils/validators/wishListValidator')
+  creatWishListValidator,
+} = require('../utils/validators/wishListValidator')
 
-
-const router = express.Router({mergeParams:true})
-
-
-// router.route('/').get(createFilterObject,getAllReviews)
+const router = express.Router({ mergeParams: true })
 
 // router.route('/:id').get(getReviewValidator,getOneReview)
 
-router.use(authServices.protect)
+router.use(authServices.protect, authServices.allowedTo('user'))
 
 router
   .route('/')
   .post(
-    authServices.allowedTo('user'),
     getLoggedUserData,
-    
     creatWishListValidator,
-    addProductOrStoreInWishList
+    addProductOrStoreInWishList,
   )
+  .get(getLoggedUserData, getAllProductOrStoreFromWishList)
 
 // router
 //   .route('/:id')
@@ -37,6 +37,6 @@ router
 //     updateReview
 //   )
 
- // .delete(authServices.allowedTo('admin','user'), addLoggedUserDataInBody,deleteReviewValidator,deleteReview)
+// .delete(authServices.allowedTo('admin','user'), addLoggedUserDataInBody,deleteReviewValidator,deleteReview)
 
 module.exports = router

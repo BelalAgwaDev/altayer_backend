@@ -268,8 +268,7 @@ const getAllDataFromList = (model, modelName,itemAttribute) =>
   asyncHandler(async (req, res) => {
     //this code get all data
     const { id } = req.params
-
-
+   
     //build query
     const countDocuments = await model.countDocuments()
     const apiFeatures = new ApiFeatures(model.find( {_id: id}, itemAttribute), req.query)
