@@ -48,54 +48,11 @@ exports.createCashOrder = asyncHandler(async (req, res, next) => {
 
 
 
-// //  @dec    get all Orders
-// //  @route  Post  /api/v1/orders
-// //  @access Protect/user/admin
-// exports.getallOrders = factory.getAll(OrderModel);
-
-// //  @dec    get specific Orders
-// //  @route  Post  /api/v1/orders
-// //  @access Protect/user/admin
-// exports.getSpecificOrders = factory.getOne(OrderModel);
-
-// //  @dec    update  Orders paid status to paid
-// //  @route  Put  /api/v1/orders/id/pay
-// //  @access Protect/admin
-// exports.updatOrdersToPaid = asyncHandler(async (req, res, next) => {
-//   const order = await OrderModel.findById(req.params.id);
-
-//   if (!order) {
-//     return next(
-//       new ApiError(`there is such a order with this id: ${req.params.id}`, 404)
-//     );
-//   }
-
-//   order.isPaid = true;
-//   order.paitAt = Date.now();
-
-//   const updateOrder = await order.save();
-//   res.status(200).send({ status: "success", data: updateOrder });
-// });
 
 
-// //  @dec    update  Orders Delivered status to true
-// //  @route  Put  /api/v1/orders/id/delivered
-// //  @access Protect/admin
-// exports.updatOrdersToDelivered = asyncHandler(async (req, res, next) => {
-//   const order = await OrderModel.findById(req.params.id);
 
-//   if (!order) {
-//     return next(
-//       new ApiError(`there is such a order with this id: ${req.params.id}`, 404)
-//     );
-//   }
 
-//   order.isDelivered = true;
-//   order.deliveredAt = Date.now();
 
-//   const updateOrder = await order.save();
-//   res.status(200).send({ status: "success", data: updateOrder });
-// });
 
 
 // //  @dec    Get checkOut session from strip and send it as response

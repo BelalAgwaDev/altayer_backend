@@ -57,9 +57,11 @@ exports.getAllPendingStoreOrder = asyncHandler(async (req, res, next) => {
     { $project: { statusPriority: 0 } },
   ]);
 
-  if (!storeOrders) {
+  if (storeOrders.length === 0) {
     return next(new ApiError(`There are no recent orders.`, 404));
   }
+
+
   res.status(200).send({
     status: true,
     message: "success to get store pending orders",

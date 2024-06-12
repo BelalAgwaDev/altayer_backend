@@ -2,41 +2,48 @@ const asyncHandler = require("express-async-handler");
 const OrderModel = require("../../modules/orderModel");
 const ApiError = require("../../utils/apiError/apiError");
 
-// //  @dec  get all complete order and cancelled Associated with store
-// //  @route  Get /api/v1/orders/user
-// //  @access Protect/user
-exports.getAllCompleteStoreOrder = asyncHandler(async (req, res, next) => {
-  const completedOrCancelledOrders = await OrderModel.find({
-    store: req.body.store,
-    status: { $in: ["Delivered", "Cancelled"] },
+// //  @dec  get all 'Store Approved' order to admin
+// //  @route  Get /api/v1/orders/admin/pending
+// //  @access private/admin
+exports.getAllPendingStoreOrder = asyncHandler(async (req, res, next) => {
+  const pendingAdminOrders = await OrderModel.find({
+    status: { $in: 'Store Approved' },
   })
     .sort({ createdAt: -1 });
 
-  if (!completedOrCancelledOrders) {
+  if (!pendingAdminOrders) {
     return next(
       new ApiError(
-        `There are no orders that have been completed or cancelled yet.`,
+        `There are no orders that have been pending to admin`,
         404
       )
     );
   }
   res.status(200).send({
     status: true,
-    message: "success to get complete orders Associated with store",
-    data: completedOrCancelledOrders,
+    message: "success to get all store approved",
+    data: pendingAdminOrders,
   });
 });
 
-// //  @dec  get all pending order to store
-// //  @route  Get /api/v1/orders/store/pending
-// //  @access Protect/store
-exports.getAllPendingStoreOrder = asyncHandler(async (req, res, next) => {
-  const storeId = req.body.store;
-  const storeOrders = await OrderModel.aggregate([
+
+
+// //  @dec  get all admin order 
+// //  @route  Get /api/v1/orders/admin
+// //  @access private/admin
+exports.getAllAdminOrder = asyncHandler(async (req, res, next) => {
+
+  const end = new Date();
+  const start = new Date();
+  start.setMonth(start.getMonth() - 1);
+
+
+
+  const adminOrders = await OrderModel.aggregate([
     {
       $match: {
-        store: storeId,
-        status: { $in: ["Pending", "Store Approved", "Admin Approved"] },
+        status: { $in: ['Assigned to Delivery', 'In Transit','Pending' , 'Cancelled','Delivered'] },
+        createdAt: { $gte: start, $lte: end },
       },
     },
     {
@@ -44,11 +51,13 @@ exports.getAllPendingStoreOrder = asyncHandler(async (req, res, next) => {
         statusPriority: {
           $switch: {
             branches: [
-              { case: { $eq: ["$status", "Pending"] }, then: 1 },
-              { case: { $eq: ["$status", "Admin Approved"] }, then: 2 },
-              { case: { $eq: ["$status", "Store Approved"] }, then: 3 },
+              { case: { $eq: ["$status", 'Assigned to Delivery'] }, then: 1 },
+              { case: { $eq: ["$status", 'In Transit'] }, then: 2 },
+              { case: { $eq: ["$status", 'Pending'] }, then: 3 },
+              { case: { $eq: ["$status", 'Cancelled'] }, then: 4 },
+              { case: { $eq: ["$status", 'Delivered'] }, then: 5 },
             ],
-            default: 4,
+            default: 6,
           },
         },
       },
@@ -57,12 +66,14 @@ exports.getAllPendingStoreOrder = asyncHandler(async (req, res, next) => {
     { $project: { statusPriority: 0 } },
   ]);
 
-  if (!storeOrders) {
-    return next(new ApiError(`There are no recent orders.`, 404));
+
+
+  if (adminOrders.length === 0) {
+    return next(new ApiError(`There are no orders within the specified period.`, 404));
   }
   res.status(200).send({
     status: true,
-    message: "success to get store pending orders",
-    data: storeOrders,
+    message: "Successfully retrieved all orders",
+    data: adminOrders,
   });
 });
