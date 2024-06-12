@@ -43,13 +43,10 @@ exports.createCashOrder = asyncHandler(async (req, res, next) => {
     //4) clear cart depend on cartId
     await CartModel.findByIdAndDelete(req.params.cartId);
   }
-  res.status(200).send({ status: "success", data: order });
+  res.status(200).send({ status: true, message: "Order created successfully", data: order });
 });
 
-// exports.filterOrderForLoggedUser = asyncHandler(async (req, res, next) => {
-//   if (req.user.role === "user") req.filterObject = { user: req.user.id };
-//   next();
-// });
+
 
 // //  @dec    get all Orders
 // //  @route  Post  /api/v1/orders
