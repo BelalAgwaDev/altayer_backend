@@ -6,6 +6,7 @@ const userModel = require('../../modules/userModel')
 // @ dec access protect(user , admin  or driver)
 // make sure the user is logged in
 exports.protect = asyncHandler(async (req, res, next) => {
+
   //check if token exist , if exist get
   let accessToken
   if (
@@ -14,6 +15,7 @@ exports.protect = asyncHandler(async (req, res, next) => {
   ) {
     accessToken = req.headers.authorization.split(' ')[1]
   }
+
 
   if (!accessToken) {
     return next(

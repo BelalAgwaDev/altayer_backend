@@ -15,8 +15,6 @@ dotenv.config({ path: "config.env" });
 dbConnection();
 
 
-
-
 //connection with cloudinary 
 cloudinaryConfig();
 
