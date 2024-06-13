@@ -39,6 +39,19 @@ const userSchema = new mongoose.Schema(
       default: "user",
     },
 
+    typeOfTheVehicle:{
+      type: String,
+      enum: ["car", "withOutAVehicle", "bicycle","motorcycle"],
+    },
+
+    NationalId: {
+      type: String,
+      trim: true,
+      required: [true, "National Id required"],
+      minlength: [14, "too short National Id"],
+      
+    },
+
     active: {
       type: Boolean,
       default: true,
