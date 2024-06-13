@@ -32,7 +32,6 @@ exports.orderAssignToDelivery = asyncHandler(async (req, res, next) => {
     req.params.orderId,
     {
       status: "Assigned to Delivery",
-      updatedAt: Date.now(),
       deliveryPerson: req.userModel._id,
     },
     { new: true }
@@ -56,7 +55,7 @@ exports.orderAssignToDelivery = asyncHandler(async (req, res, next) => {
 exports.orderInTransit = asyncHandler(async (req, res, next) => {
   const order = await OrderModel.findByIdAndUpdate(
     req.params.orderId,
-    { status: "In Transit", updatedAt: Date.now() },
+    { status: "In Transit" },
     { new: true }
   );
   if (!order) {
@@ -72,27 +71,7 @@ exports.orderInTransit = asyncHandler(async (req, res, next) => {
     .send({ status: true, message: "order in transit", data: order });
 });
 
-// //  @dec  change order status to approve By Admin
-// //  @route  Put  /api/v1/orders/:orderId/approveByAdmin
-// //  @access Protect/admin
-exports.orderApproveByAdmin = asyncHandler(async (req, res, next) => {
-  const order = await OrderModel.findByIdAndUpdate(
-    req.params.orderId,
-    { status: "Admin Approved", updatedAt: Date.now() },
-    { new: true }
-  );
-  if (!order) {
-    return next(
-      new ApiError(
-        `there is no order with this id : ${req.params.orderId}`,
-        404
-      )
-    );
-  }
-  res
-    .status(200)
-    .send({ status: true, message: "admin approved order", data: order });
-});
+
 
 // //  @dec  change order status to Delivered
 // //  @route  Put  /api/v1/orders/:orderId/delivered
@@ -104,7 +83,6 @@ exports.orderDelivered = asyncHandler(async (req, res, next) => {
     req.params.orderId,
     {
       status: "Delivered",
-      updatedAt: Date.now(),
       isPaid: true,
       paitAt: Date.now(),
     },
@@ -129,7 +107,7 @@ exports.orderDelivered = asyncHandler(async (req, res, next) => {
 exports.orderCancelled = asyncHandler(async (req, res, next) => {
   const order = await OrderModel.findByIdAndUpdate(
     req.params.orderId,
-    { status: "Cancelled", updatedAt: Date.now() },
+    { status: "Cancelled" },
     { new: true }
   );
   if (!order) {

@@ -11,6 +11,7 @@ const wishListRoute = require("./wishListRoute");
 const CouponRoute = require("./couponRoute");
 const cartRoute = require("./cartRoute");
 const orderRoute = require("./orderRoute");
+const driverRoute = require("./driverRoute");
 
 
 
@@ -30,6 +31,7 @@ const mountRoute = (app) => {
     app.use("/v1/api/coupon", CouponRoute);
     app.use("/v1/api/cart", cartRoute);
     app.use("/v1/api/order", orderRoute);
+    app.use("/v1/api/driver", driverRoute);
   };
   
 
