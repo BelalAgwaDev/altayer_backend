@@ -12,24 +12,30 @@ const driverSchema = new mongoose.Schema(
   },
     
 
-  typeOfTheVehicle:{
+  status: {
     type: String,
-    enum: ["car", "withOutAVehicle", "bicycle","motorcycle"],
+    enum: ["Active", "Inactive", "Suspended"],
+    default: "Active",
+  },
+
+  typeOfTheVehicle: {
+    type: String,
+    enum: ["car", "withOutAVehicle", "bicycle", "motorcycle"],
     default: "motorcycle",
   },
 
-  frontNationalIdImage:String,
+  location: {
+    type: { type: String, enum: ["Point"], default: "Point" },
+    coordinates: { type: [Number], default: [0, 0] },
+  },
+
   NationalId: {
     type: String,
     trim: true,
     required: [true, "National Id required"],
     minlength: [14, "too short National Id"],
-    
   },
-  backNationalIdImage: String,
 
-  anotherPhone:String,
-  
   user: {
     type: mongoose.Schema.ObjectId,
     ref: "User",
