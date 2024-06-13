@@ -46,20 +46,7 @@ const driverSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-const setImageUrl = (doc) => {
-  //return image base url + image name
-  if (doc) {
-    const imageUrl = `${process.env.BASE_URL}/driver/${doc}`;
-    return imageUrl;
-  }
-};
 
-//work in create data
-driverSchema.pre("save", async function (next) {
-  this.frontNationalIdImage = setImageUrl(this.frontNationalIdImage);
-  this.backNationalIdImage = setImageUrl(this.backNationalIdImage);
-  next();
-});
 
 const driverModel = mongoose.model("driver", driverSchema);
 

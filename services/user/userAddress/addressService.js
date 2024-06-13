@@ -18,7 +18,7 @@ const passingDataToReqBody = (req, res, next) => {
 }
 
 
-//using to get all adress user login
+//using to get all address user login
 const createFilterObject = (req, res, next) => {
   req.filterObject = { user: req.body.user }
   next()
