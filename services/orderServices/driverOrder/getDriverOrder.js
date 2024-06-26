@@ -36,12 +36,42 @@ exports.getAllAdminApprovedOrder = asyncHandler(async (req, res, next) => {
 
   if (!adminApprovedOrders) {
     return next(
-      new ApiError(`There are no orders that have been admin approved to driver`, 404)
+      new ApiError(
+        `There are no orders that have been admin approved to driver`,
+        404
+      )
     );
   }
   res.status(200).send({
     status: true,
     message: "success to get all admin approved order",
     data: adminApprovedOrders,
+  });
+});
+
+
+// //  @dec  get all driver order
+// //  @route  Get /api/v1/orders/driver
+// //  @access private/driver man
+exports.getAlldriverOrder = asyncHandler(async (req, res, next) => {
+  const end = new Date();
+  const start = new Date();
+  start.setMonth(start.getMonth() - 1);
+
+  const driverOrder = await OrderModel.find({
+    deliveryPerson: req.userModel._id,
+  }).sort({ createdAt: { $gte: start, $lte: end } });
+
+
+
+  if (!driverOrder) {
+    return next(
+      new ApiError(`There are no orders within the specified period.`, 404)
+    );
+  }
+  res.status(200).send({
+    status: true,
+    message: "Successfully retrieved all orders",
+    data: driverOrder,
   });
 });

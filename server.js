@@ -12,7 +12,7 @@ const ApiError = require("./utils/apiError/apiError");
 const globalError = require("./middleware/errorMiddleware");
 const {
  addDriverSocket,removeDriverSocket
-} = require('./services/orderServices/driverSocketUtils'); 
+} = require('./services/orderServices/driverOrder/driverSocketUtils'); 
 
 
 

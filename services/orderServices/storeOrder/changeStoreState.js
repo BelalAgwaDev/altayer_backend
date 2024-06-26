@@ -29,7 +29,7 @@ exports.orderApproveByStore = asyncHandler(async (req, res, next) => {
 
 
 // //  @dec  change order status to Store Approved
-// //  @route  Put  /api/v1/orders/:orderId/orderCompletedByStore
+// //  @route  Put  /api/v1/orders/:orderId/completedByStore
 // //  @access Protect/store
 exports.orderCompletedByStore = asyncHandler(async (req, res, next) => {
     const order = await OrderModel.findByIdAndUpdate(
