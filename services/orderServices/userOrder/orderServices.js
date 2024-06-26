@@ -1,9 +1,9 @@
 const asyncHandler = require("express-async-handler");
 require('dotenv').config({ path: 'config.env' })
 
-const OrderModel = require("../../modules/orderModel");
-const CartModel = require("../../modules/cartModel");
-const ApiError = require("../../utils/apiError/apiError");
+const OrderModel = require("../../../modules/orderModel");
+const CartModel = require("../../../modules/cartModel");
+const ApiError = require("../../../utils/apiError/apiError");
 
 //  @dec    create cash Order
 //  @route  Post  /api/v1/orders/cardId
@@ -33,6 +33,7 @@ exports.createCashOrder = asyncHandler(async (req, res, next) => {
   const order = await OrderModel.create({
     user: req.userModel._id,
     store: cart.store,
+    storeAddress: cart.storeAddress,
     cartItems: cart.cartItems,
     totalOrderPrice: totalOrderPrice,
     shippingAddress: req.body.shippingAddress,

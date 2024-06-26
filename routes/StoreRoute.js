@@ -16,6 +16,7 @@ const {
 } = require('../services/storeScervice/store/createStore')
 
 const { getAllStore } = require('../services/storeScervice/store/getAllStore')
+const { getStoreWithProducts } = require('../services/storeScervice/store/getSpecificStoreData')
 const {
   getAllStoreNearbyInUser,
 } = require('../services/storeScervice/store/getAllStoreNearbyUser')
@@ -59,6 +60,7 @@ router.use(authServices.protect)
 router.route('/').get(getAllStore)
 router.route('/storeNearby').get(getAllStoreNearbyInUser)
 router.route('/:id').get(getStore)
+router.route('/product/:storeId').get(getStoreWithProducts)
 
 router.use(authServices.allowedTo('admin', 'storeOwner'))
 

@@ -1,6 +1,6 @@
 const asyncHandler = require("express-async-handler");
-const OrderModel = require("../../modules/orderModel");
-const ApiError = require("../../utils/apiError/apiError");
+const OrderModel = require("../../../modules/orderModel");
+const ApiError = require("../../../utils/apiError/apiError");
 
 // //  @dec  get all complete order and cancelled to user
 // //  @route  Get /api/v1/orders/user
@@ -8,7 +8,7 @@ const ApiError = require("../../utils/apiError/apiError");
 exports.getAllCompleteUserOrder = asyncHandler(async (req, res, next) => {
   const completedOrCancelledOrders = await OrderModel.find({
     user: req.userModel._id,
-    status: { $in: ["Delivered", "Cancelled"] },
+    orderStatus: { $in: ["Delivered", "Cancelled"] },
   })
     .sort({ createdAt: -1 })
     .limit(25);
@@ -38,7 +38,7 @@ exports.getAllCompleteUserOrder = asyncHandler(async (req, res, next) => {
 exports.getAllPendingUserOrder = asyncHandler(async (req, res, next) => {
     const pendingOrders = await OrderModel.find({
       user: req.userModel._id,
-      status: { $ne: ["Delivered", "Cancelled"] },
+      orderStatus: { $ne: ["Delivered", "Cancelled"] },
     })
       .sort({ createdAt: -1 })
      

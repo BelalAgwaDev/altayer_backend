@@ -47,6 +47,14 @@ const CartSchema = mongoose.Schema(
   {
     user: { type: mongoose.Schema.ObjectId, ref: 'User', required: true },
     store: { type: mongoose.Schema.ObjectId, ref: 'Store', required: true },
+
+    storeAddress: {
+      location: {
+        type: { type: String, enum: ['Point'], required: true },
+        coordinates: { type: [Number], required: true },
+      },
+      storeRegion: { type: String, required: true },
+    },
     cartItems: [cartItemSchema],
     totalCartPrice: Number,
     totalPriceAfterDiscount: Number,

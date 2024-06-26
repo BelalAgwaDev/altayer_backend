@@ -1,6 +1,5 @@
 const mongoose = require("mongoose");
 
-
 const specialOfferSchema = new mongoose.Schema({
   description: { type: String },
   discountPercent: { type: Number },
@@ -13,10 +12,9 @@ const bulkPricingSchema = new mongoose.Schema({
   discountRate: { type: Number },
 });
 
-
 // Define the CartItem schema
 const cartItemSchema = mongoose.Schema({
-  product: { type: mongoose.Schema.ObjectId, ref: 'Product', required: true },
+  product: { type: mongoose.Schema.ObjectId, ref: "Product", required: true },
   quantity: { type: Number, default: 1 },
   options: [
     {
@@ -34,14 +32,12 @@ const cartItemSchema = mongoose.Schema({
     },
   ],
 
-
-
   specialOffers: [specialOfferSchema],
   bulkPricing: [bulkPricingSchema],
   notes: { type: String },
   price: { type: Number, required: true },
   totalItemPrice: { type: Number },
-})
+});
 
 const OrderSchema = mongoose.Schema(
   {
@@ -52,21 +48,48 @@ const OrderSchema = mongoose.Schema(
 
     store: {
       type: mongoose.Schema.ObjectId,
-      ref: 'Store',
+      ref: "Store",
     },
 
-    status: {
-      type: String,
-      enum: ['Pending', 'Store Approved', 'Admin Approved', 'Assigned to Delivery', 'In Transit', 'Delivered', 'Cancelled'],
-      default: 'Pending'
+    storeAddress: {
+      location: {
+        type: { type: String, enum: ["Point"], required: true },
+        coordinates: { type: [Number], required: true },
+      },
+
+      storeRegion: { type: String, required: true },
     },
+
+ 
+    orderStatus: {
+      type: String,
+      enum: [
+        "Pending",
+        "In Transit",
+        "Delivered",
+        "Cancelled",
+      ],
+      default: "Pending",
+    },
+
+    storeStatus: {
+      type: String,
+      enum: ["Pending", "Store Approved", "Order Completed", "Delivery Delivered"],
+      default: "Pending",
+    },
+  
+    adminStatus: {
+      type: String,
+      enum: ["Pending", "Admin Approved", "Assigned to Delivery", "Delivery Delivered"],
+      default: "Pending",
+    },
+  
     deliveryPerson: {
       type: mongoose.Schema.ObjectId,
-      ref: 'User',
+      ref: "User",
     },
 
     cartItems: [cartItemSchema],
-
 
     taxPrice: {
       type: Number,
@@ -77,11 +100,10 @@ const OrderSchema = mongoose.Schema(
       type: Number,
       default: 0,
     },
-    shippingAddress:  {
+    shippingAddress: {
       type: mongoose.Schema.ObjectId,
-      ref: 'UserAddress',
+      ref: "UserAddress",
     },
-
 
     totalOrderPrice: {
       type: Number,
@@ -98,22 +120,21 @@ const OrderSchema = mongoose.Schema(
       default: false,
     },
     paitAt: Date,
- 
   },
   { timestamps: true }
 );
 
-OrderSchema.pre(/^find/,function(next){
+OrderSchema.pre(/^find/, function (next) {
   this.populate({
-    path:"user",
-    select:"name profileImage email phone"
+    path: "user",
+    select: "name profileImage email phone",
   }).populate({
-    path:"cartItems.product",
-    select:"title imageCover "
-  })
+    path: "cartItems.product",
+    select: "title imageCover ",
+  });
 
-  next()
-})
+  next();
+});
 const OrderModel = mongoose.model("Order", OrderSchema);
 
 module.exports = OrderModel;

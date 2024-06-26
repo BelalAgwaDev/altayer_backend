@@ -1,4 +1,6 @@
 const express = require("express");
+const socketIo = require('socket.io');
+const http = require('http');
 
 const path = require("path");
 const dotenv = require("dotenv");
@@ -8,6 +10,12 @@ const cloudinaryConfig = require("./config/cloudinaryConfig");
 const mountRoutes = require("./routes");
 const ApiError = require("./utils/apiError/apiError");
 const globalError = require("./middleware/errorMiddleware");
+const {
+ addDriverSocket,removeDriverSocket
+} = require('./services/orderServices/driverSocketUtils'); 
+
+
+
 
 dotenv.config({ path: "config.env" });
 
@@ -20,6 +28,32 @@ cloudinaryConfig();
 
 //express app
 const app = express();
+
+
+//socket Server
+const serverSocket = http.createServer(app);
+
+const io = socketIo(serverSocket);
+
+//socket server using to send notification to driver
+io.on('connection', (socket) => {
+  console.log('A driver connected');
+
+  socket.on('registerDriver', (driverId) => {
+    socket.driverId = driverId;
+    addDriverSocket(driverId, socket); 
+    console.log(`Driver ${driverId} registered`);
+  });
+
+  socket.on('disconnect', () => {
+    console.log('A driver disconnected');
+    if (socket.driverId) {
+      removeDriverSocket(socket.driverId); 
+      console.log(`Driver ${socket.driverId} unregistered`);
+    }
+  });
+});
+
 
 //Middleware
 // for parsing application/json
@@ -51,6 +85,8 @@ app.use(globalError);
 const server = app.listen(process.env.PORT || 8080, () => {
   console.log(`App Running In This Port .`);
 });
+
+
 
 //Events (handling Rejection error outside express ) ---out express
 process.on("unhandledRejection", (err) => {

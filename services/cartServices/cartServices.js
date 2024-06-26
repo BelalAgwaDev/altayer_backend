@@ -18,6 +18,9 @@ exports.addProductToCart = asyncHandler(async (req, res, next) => {
     specialOffers,
     bulkPricing,
     notes,
+    longitude,
+    latitude,
+    storeRegion
     
   } = req.body;
 
@@ -42,6 +45,13 @@ exports.addProductToCart = asyncHandler(async (req, res, next) => {
     cart = new CartModel({
       user: req.userModel._id,
       store: productObject.storeOwner,
+      storeAddress: {
+        location: {
+          type: 'Point', 
+          coordinates: [longitude, latitude], 
+        },
+        storeRegion:storeRegion
+      },
       cartItems: [{
         product: productObject._id,
         quantity: quantity,
@@ -55,7 +65,8 @@ exports.addProductToCart = asyncHandler(async (req, res, next) => {
     });
   } else {
 
-  const existingItemIndex = cart.cartItems.findIndex((item) =>item.product._id.toString() === productObject._id.toString() &&
+  const existingItemIndex = cart.cartItems.findIndex((item) =>
+    item.product._id.toString() === productObject._id.toString() &&
     isEqualArray(item.options, options) &&
     isEqualArray(item.customizations, customizations) &&
     isEqualArray(item.specialOffers, specialOffers) &&
