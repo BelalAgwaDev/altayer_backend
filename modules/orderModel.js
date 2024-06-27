@@ -127,10 +127,10 @@ const OrderSchema = mongoose.Schema(
 OrderSchema.pre(/^find/, function (next) {
   this.populate({
     path: "user",
-    select: "name profileImage email phone",
+    select: "name image email phone",
   }).populate({
     path: "cartItems.product",
-    select: "title imageCover ",
+    select: "title image ",
   });
 
   next();

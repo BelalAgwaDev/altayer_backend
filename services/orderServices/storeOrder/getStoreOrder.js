@@ -43,26 +43,7 @@ exports.getAllStorApprovedeOrder = asyncHandler(async (req, res, next) => {
   });
 });
 
-// //  @dec  get all Store Approved order
-// //  @route  Get /api/v1/orders/store/storeApproved
-// //  @access private/store
-exports.getAllStorApprovedeOrder = asyncHandler(async (req, res, next) => {
-  const storApprovedeOrders = await OrderModel.find({
-    store: req.body.store,
-    storeStatus: { $in: "Store Approved" },
-  }).sort({ createdAt: -1 });
 
-  if (!storApprovedeOrders) {
-    return next(
-      new ApiError(`There are no orders that have been Approved to store`, 404)
-    );
-  }
-  res.status(200).send({
-    status: true,
-    message: "success to get all store approved order",
-    data: storApprovedeOrders,
-  });
-});
 
 // //  @dec  get all Store Completed,Delivered order
 // //  @route  Get /api/v1/orders/store/done

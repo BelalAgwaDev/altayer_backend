@@ -1,7 +1,7 @@
 const express = require("express");
 const authServices = require("../services/authServices/protect");
 const {
-  createCashOrder,
+  createCashOrder,checkOutSession
 } = require("../services/orderServices/userOrder/orderServices");
 
 const {
@@ -47,6 +47,7 @@ const router = express.Router();
 
 router.use(authServices.protect);
 
+//driver
 router.use(authServices.allowedTo("driver"));
 router.route("/:orderId/assignToDelivery").put(orderAssignToDelivery);
 router.route("/:orderId/orderDeliveryDelivered").put(orderDeliveryDelivered);
@@ -54,7 +55,7 @@ router.route("/:orderId/orderDelivered").put(orderDelivered);
 router.route("driver/pending").get(getAllAdminApprovedOrder);
 router.route("driver").get(getAlldriverOrder);
 
-
+//storeOwner
 router.use(authServices.allowedTo("storeOwner"));
 router.route("/:orderId/approveByStore").put(orderApproveByStore);
 router.route("/:orderId/completedByStore").put(orderCompletedByStore);
@@ -62,13 +63,16 @@ router.route("/store/pending").get(getAllPendingStoreOrder);
 router.route("/store/storeApproved").get(getAllStorApprovedeOrder);
 router.route("/store/done").get(getAllStorDoneOrder);
 
+//admin
 router.use(authServices.allowedTo("admin"));
 router.route("/:orderId/approveByAdmin").put(orderApproveByAdmin);
 router.route("/admin/pending").get(getAllPendingAdminOrder);
 router.route("/admin").get(getAllAdminOrder);
 
+//user
 router.use(authServices.allowedTo("user"));
 router.route("/:cartId").post(createCashOrder);
+router.route("/checkOut-session/:cartId").get(checkOutSession);
 router.route("/user").get(getAllCompleteUserOrder);
 router.route("/user/pending").get(getAllPendingUserOrder);
 router.route("/:orderId/cancelled").put(orderCancelled);
